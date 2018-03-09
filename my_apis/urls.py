@@ -16,8 +16,14 @@ Including another URLconf
 from django.conf.urls import url, include
 from django.contrib import admin
 
+from my_apis.schema_generator import get_swagger_view
+
+schema_view = get_swagger_view(title='MY_APIS API')
+
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include('apis.urls')),
+    url(r'^api-docs/', schema_view),
 
 ]
