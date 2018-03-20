@@ -162,6 +162,34 @@ class SignUpView(APIView):
         phone = request.data.get('phone')
         password = request.data.get('password')
 
+        try:
+            existing_user = User.objects.get(email__iexact=email)
+            if existing_user:
+                content = {
+                    'status': {
+                        'isSuccess': False,
+                        'code': "FAILURE",
+                        'message': "Invalid",
+                    },
+                    'error': "An account already exists under this email address."
+                }
+
+                return Response(content, status.HTTP_400_BAD_REQUEST)
+        except User.MultipleObjectsReturned:
+            content = {
+                'status': {
+                    'isSuccess': False,
+                    'code': "FAILURE",
+                    'message': "Invalid",
+                },
+                'error': "An account already exists under this email address."
+            }
+
+            return Response(content, status.HTTP_400_BAD_REQUEST)
+        except:
+            pass
+
+
         user = User.objects.create_user(create_username(name),email, password)
         user.first_name = name
         user.is_active = True
@@ -170,7 +198,15 @@ class SignUpView(APIView):
         profile.contact = phone
         profile.complete=True
         profile.save()
-        return Response()
+        content = {
+            'status': {
+                'isSuccess': True,
+                'code': "SUCCESS",
+                'message': "Success"
+            }
+        }
+
+        return Response(content, status.HTTP_200_OK)
 
 class UserLoginView(APIView):
     api_docs = {
