@@ -18,22 +18,28 @@ from django.contrib.auth import authenticate
 from django.contrib.gis.geos import Point
 from django.contrib.gis.measure import Distance
 from rest_framework.status import HTTP_401_UNAUTHORIZED
+from django.contrib.auth.models import User
 
 from django.shortcuts import render
-from apis.models import Category, Hotel, Menu
-from .serializers import CategorySerializer, HotelResultsSerializer, MenuSerializer
+from apis.models import Category, Hotel, Menu, Profile
+from .serializers import CategorySerializer, HotelResultsSerializer, MenuSerializer, AuthCustomTokenSerializer
+from  my_apis.utils import create_username
 import json
 
 
 # Create your views here.
 
 class CategoryView(GenericAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
     def get(self, request, *args, **kwargs):
         queryset = Category.objects.all()
         serializer = CategorySerializer(queryset, many=True)
         return Response(serializer.data)
 
 class ResultsView(GenericAPIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
     api_docs = {
         'get': {
             'fields': [
@@ -103,6 +109,7 @@ class HotelMenuView(GenericAPIView):
     #         ]
     #     }
     # }
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get_object(self, pk):
         try:
@@ -112,8 +119,146 @@ class HotelMenuView(GenericAPIView):
 
     def get(self, request, pk, *args, **kwargs):
         hotel = self.get_object(pk)
-        print "The hotel is:", hotel
         menu = Menu.objects.filter(hotel=hotel)
-        print "The Menu is:", menu
         serializer = MenuSerializer(menu, many=True)
         return Response(serializer.data)
+
+class SignUpView(APIView):
+    api_docs = {
+        'post': {
+            'fields': [
+                {
+                    'name': 'name',
+                    'required': True,
+                    'description': 'name',
+                    'type': 'string',
+
+                },
+                {
+                    'name': 'email',
+                    'required': True,
+                    'description': 'email',
+                    'type': 'string',
+                },
+                {
+                    'name': 'phone',
+                    'required': True,
+                    'description': 'phone',
+                    'type': 'integer',
+                },
+                {
+                    'name': 'password',
+                    'required': True,
+                    'description': 'password',
+                    'type': 'string',
+                }
+            ]
+        }
+    }
+
+    def post(self, request, *args, **kwargs):
+        name = request.data.get('name')
+        email = request.data.get('email')
+        phone = request.data.get('phone')
+        password = request.data.get('password')
+
+        user = User.objects.create_user(create_username(name),email, password)
+        user.first_name = name
+        user.is_active = True
+        user.save()
+        profile, created = Profile.objects.get_or_create(user=user)
+        profile.contact = phone
+        profile.complete=True
+        profile.save()
+        return Response()
+
+class UserLoginView(APIView):
+    api_docs = {
+        'post': {
+            'fields': [
+                {
+                    'name': 'email',
+                    'required': True,
+                    'description': 'Email of user',
+                    'type': 'string'
+                },
+                {
+                    'name': 'password',
+                    'required': True,
+                    'description': 'Password of user',
+                    'type': 'string'
+                },
+            ]
+        }
+    }
+
+    def post(self, request):
+        serializer = AuthCustomTokenSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+            password = serializer.validated_data['password']
+
+            try:
+                user_request = User.objects.get(email__iexact=email)
+            except:
+                content = {
+                    'status': {
+                        'isSuccess': False,
+                        'code': "FAILURE",
+                        'message': "Invalid Credentials",
+                    },
+                    'error': "Either email or password is incorrect."
+                }
+                return Response(content, status.HTTP_400_BAD_REQUEST)
+
+            username = user_request.username
+            user = authenticate(username=username, password=password)
+
+            if user:
+                if user.is_active:
+                    token, created = Token.objects.get_or_create(user=user)
+                    content = {
+                        'status': {
+                            'isSuccess': True,
+                            'code': "SUCCESS",
+                            'message': "Success"
+                        },
+                        'token': token.key,
+                        'employee': serializer.data
+                    }
+
+                    return Response(content, status.HTTP_200_OK)
+                else:
+                    content = {
+                        'status': {
+                            'isSuccess': False,
+                            'code': "FAILURE",
+                            'message': "Permission Denied",
+                        },
+                        'error': "Your access to this portal is restricted by your comapny."
+                    }
+
+                    return Response(content, status.HTTP_400_BAD_REQUEST)
+            else:
+                content = {
+                    'status': {
+                        'isSuccess': False,
+                        'code': "FAILURE",
+                        'message': "Invalid Credentials",
+                    },
+                    'error': "Either email or password is incorrect."
+                }
+
+            return Response(content, status.HTTP_200_OK)
+        else:
+            content = {
+                'status': {
+                    'isSuccess': False,
+                    'code': "FAILURE",
+                    'message': "Invalid Credentials",
+                },
+                'error': serializer.errors
+            }
+
+            return Response(content, status.HTTP_400_BAD_REQUEST)
+
