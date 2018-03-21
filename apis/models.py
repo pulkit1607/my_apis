@@ -107,6 +107,19 @@ class Refund(models.Model):
 
 
 
+class Cart(models.Model):
+    customer = models.OneToOneField(User)
+
+    def __unicode__(self):
+        return self.customer.username
+
+class CartDetails(models.Model):
+    cart = models.ForeignKey(Cart)
+    product = models.ForeignKey(Menu)
+    price = models.IntegerField(default=0, null=True, blank=True)
+    qty = models.IntegerField(default=1, null=True, blank=True)
+
+
 def get_unique_order_id(instance):
     unique_id = "{0:10d}".format(randint(1, 10000000000)).replace(" ", "0")
 

@@ -21,7 +21,7 @@ from rest_framework.status import HTTP_401_UNAUTHORIZED
 from django.contrib.auth.models import User
 
 from django.shortcuts import render
-from apis.models import Category, Hotel, Menu, Profile
+from apis.models import Category, Hotel, Menu, Profile, Cart, CartDetails
 from .serializers import CategorySerializer, HotelResultsSerializer, MenuSerializer, AuthCustomTokenSerializer
 from  my_apis.utils import create_username
 import json
@@ -297,4 +297,60 @@ class UserLoginView(APIView):
             }
 
             return Response(content, status.HTTP_400_BAD_REQUEST)
+
+class AddToCartView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    api_docs = {
+        'post': {
+            'fields': [
+                {
+                    'name': 'prod_id',
+                    'required': True,
+                    'description': 'product id',
+                    'type': 'number'
+                },
+                {
+                    'name': 'qty',
+                    'required': True,
+                    'description': 'Quantity',
+                    'type': 'number'
+                },
+            ]
+        }
+    }
+
+    def post(self, request):
+        user = self.request.user
+        if user:
+            prod = request.data.get('prod_id')
+            obj = Menu.objects.filter(id=prod).first()
+            qty = request.data.get('qty')
+            cart, created = Cart.objects.get_or_create(customer=user)
+            cart_details, created = CartDetails.objects.get_or_create(
+                cart=cart,
+                product=obj,
+                price=obj.price,
+            )
+            cart_details.qty=qty
+            cart_details.save()
+            content = {
+                'status': {
+                    'isSuccess': True,
+                    'code': "SUCCESS",
+                    'message': "Success"
+                }
+            }
+            return Response(content, status.HTTP_200_OK)
+        else:
+
+            content = {
+                'status': {
+                    'isSuccess': False,
+                    'code': "FAILURE",
+                    'message': "User not logged in",
+                }
+            }
+
+            return Response(content, status.HTTP_400_BAD_REQUEST)
+
 
