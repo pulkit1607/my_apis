@@ -22,7 +22,7 @@ from django.contrib.auth.models import User
 
 from django.shortcuts import render
 from apis.models import Category, Hotel, Menu, Profile, Cart, CartDetails
-from .serializers import CategorySerializer, HotelResultsSerializer, MenuSerializer, AuthCustomTokenSerializer
+from .serializers import CategorySerializer, HotelResultsSerializer, MenuSerializer, AuthCustomTokenSerializer, CartDetailsSerializer
 from  my_apis.utils import create_username
 import json
 
@@ -332,6 +332,7 @@ class AddToCartView(APIView):
                 price=obj.price,
             )
             cart_details.qty=qty
+            cart_details.product_name=obj.name
             cart_details.save()
             content = {
                 'status': {
@@ -354,3 +355,32 @@ class AddToCartView(APIView):
             return Response(content, status.HTTP_400_BAD_REQUEST)
 
 
+class CartDetailView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request):
+        user = self.request.user
+        if user:
+            cart = Cart.objects.filter(customer=user).first()
+            details = CartDetails.objects.filter(cart=cart)
+            serializer = CartDetailsSerializer(details, many=True)
+            content = {
+                'status': {
+                    'isSuccess': True,
+                    'code': "SUCCESS",
+                    'message': "Success"
+                },
+                'details': serializer.data
+            }
+            return Response(content, status.HTTP_200_OK)
+        else:
+            content = {
+                'status': {
+                    'isSuccess': False,
+                    'code': "FAILURE",
+                    'message': "User not logged in",
+                }
+
+            }
+
+            return Response(content, status.HTTP_400_BAD_REQUEST)

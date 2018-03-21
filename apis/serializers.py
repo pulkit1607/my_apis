@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Hotel, Menu
+from .models import Category, Hotel, Menu, CartDetails
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.models import User
 
@@ -24,3 +24,9 @@ class MenuSerializer(serializers.ModelSerializer):
 class AuthCustomTokenSerializer(serializers.Serializer):
     email = serializers.EmailField()
     password = serializers.CharField()
+
+class CartDetailsSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = CartDetails
+        fields = ('product_name', 'price', 'qty')

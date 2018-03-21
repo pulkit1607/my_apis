@@ -116,6 +116,7 @@ class Cart(models.Model):
 class CartDetails(models.Model):
     cart = models.ForeignKey(Cart)
     product = models.ForeignKey(Menu)
+    product_name = models.CharField(max_length=250, null=True, blank=True)
     price = models.IntegerField(default=0, null=True, blank=True)
     qty = models.IntegerField(default=1, null=True, blank=True)
 
