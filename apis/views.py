@@ -198,15 +198,41 @@ class SignUpView(APIView):
         profile.contact = phone
         profile.complete=True
         profile.save()
-        content = {
-            'status': {
-                'isSuccess': True,
-                'code': "SUCCESS",
-                'message': "Success"
-            }
-        }
 
-        return Response(content, status.HTTP_200_OK)
+        username = user.username
+        user_login = authenticate(username=username, password=password)
+        if user.is_active:
+            token, created = Token.objects.get_or_create(user=user)
+            content = {
+                'status': {
+                    'isSuccess': True,
+                    'code': "SUCCESS",
+                    'message': "Success"
+                },
+                'token': token.key,
+            }
+
+            return Response(content, status.HTTP_200_OK)
+        else:
+            content = {
+                'status': {
+                    'isSuccess': False,
+                    'code': "FAILURE",
+                    'message': "Permission Denied",
+                },
+                'error': "Your access to this portal is restricted by your comapny."
+            }
+
+            return Response(content, status.HTTP_400_BAD_REQUEST)
+        # content = {
+        #     'status': {
+        #         'isSuccess': True,
+        #         'code': "SUCCESS",
+        #         'message': "Success"
+        #     }
+        # }
+        #
+        # return Response(content, status.HTTP_200_OK)
 
 class UserLoginView(APIView):
     api_docs = {
