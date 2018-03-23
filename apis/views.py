@@ -19,11 +19,13 @@ from django.contrib.gis.geos import Point
 from django.contrib.gis.measure import Distance
 from rest_framework.status import HTTP_401_UNAUTHORIZED
 from django.contrib.auth.models import User
+from django.contrib.sites.shortcuts import get_current_site
 
 from django.shortcuts import render
-from apis.models import Category, Hotel, Menu, Profile, Cart, CartDetails
-from .serializers import CategorySerializer, HotelResultsSerializer, MenuSerializer, AuthCustomTokenSerializer, CartDetailsSerializer
-from  my_apis.utils import create_username
+from apis.models import Category, Hotel, Menu, Profile, Cart, CartDetails, PasswordReset, Order, OrderDetails
+from .serializers import (CategorySerializer, HotelResultsSerializer, MenuSerializer, AuthCustomTokenSerializer,
+                          CartDetailsSerializer, ForgetPasswordSerializer, OrderSerializer, OrderDetailsSerializer)
+from  my_apis.utils import create_username, SendEmail
 import json
 
 
@@ -407,6 +409,138 @@ class CartDetailView(APIView):
                     'message': "User not logged in",
                 }
 
+            }
+
+            return Response(content, status.HTTP_400_BAD_REQUEST)
+
+class ForgetPasswordView(APIView):
+    api_docs = {
+        'post': {
+            'fields': [
+                {
+                    'name': 'email',
+                    'required': True,
+                    'description': 'Email of user',
+                    'type': 'string'
+                }
+            ]
+        }
+    }
+
+    def post(self, request):
+        serializer = ForgetPasswordSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+
+            try:
+                user_request = User.objects.get(email__iexact=email)
+            except:
+                content = {
+                    'status': {
+                        'isSuccess': False,
+                        'code': "FAILURE",
+                        'message': "Invalid Credentials",
+                    },
+                    'error': "Email Not registered with us."
+                }
+                return Response(content, status.HTTP_400_BAD_REQUEST)
+
+            PasswordReset.objects.filter(user=user_request).delete()
+            password_reset = PasswordReset(user=user_request)
+            password_reset.save()
+
+            current_site = get_current_site(request)
+
+            email_sender = SendEmail(request)
+            email_sender.send([user_request.email], "email_messages/reset-password.html",
+                              {'user': user_request, 'domain': current_site.domain,
+                               'token': password_reset.token,
+                               },
+                              "Reset your password", ['admin@example.com'])
+            content = {
+                'status': {
+                    'isSuccess': True,
+                    'code': "SUCCESS",
+                    'message': "Success. Email sent successfully"
+                },
+                'token': password_reset.token
+            }
+
+            return Response(content, status.HTTP_200_OK)
+
+class ResetPasswordView(APIView):
+    pass
+
+
+class UserOrdersView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request):
+        user = self.request.user
+        if user:
+            profile = Profile.objects.filter(user=user).first()
+            orders = Order.objects.filter(customer=profile)
+
+            if not orders:
+                content = {
+                    'status': {
+                        'isSuccess': True,
+                        'code': "SUCCESS",
+                        'message': "No Orders Yet",
+                    }
+                }
+                return Response(content, status.HTTP_200_OK)
+            else:
+                serializer = OrderSerializer(orders, many=True)
+                content = {
+                    'status': {
+                        'isSuccess': True,
+                        'code': "SUCCESS",
+                        'message': "You have Orders",
+                    },
+                    'details': serializer.data
+                }
+                return Response(content, status.HTTP_200_OK)
+
+        else:
+
+            content = {
+                'status': {
+                    'isSuccess': False,
+                    'code': "FAILURE",
+                    'message': "User not logged in",
+                }
+            }
+
+            return Response(content, status.HTTP_400_BAD_REQUEST)
+
+class UserOrderDetailView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def post(self, request, order_id, *args, **kwargs):
+        user = self.request.user
+        if user:
+            order = Order.objects.filter(order_id=order_id).first()
+            order_details = OrderDetails.objects.filter(order=order)
+            serializer = OrderDetailsSerializer(order_details, many=True)
+            content = {
+                'status': {
+                    'isSuccess': True,
+                    'code': "SUCCESS",
+                    'message': "Order Details",
+                },
+                'details': serializer.data
+            }
+            return Response(content, status.HTTP_200_OK)
+
+        else:
+
+            content = {
+                'status': {
+                    'isSuccess': False,
+                    'code': "FAILURE",
+                    'message': "User not logged in",
+                }
             }
 
             return Response(content, status.HTTP_400_BAD_REQUEST)

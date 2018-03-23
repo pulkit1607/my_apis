@@ -6,6 +6,9 @@ from django.contrib.auth.models import User
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import Point
 
+from hashlib import md5
+from random import random
+
 from random import randint
 # Create your models here.
 
@@ -119,6 +122,23 @@ class CartDetails(models.Model):
     product_name = models.CharField(max_length=250, null=True, blank=True)
     price = models.IntegerField(default=0, null=True, blank=True)
     qty = models.IntegerField(default=1, null=True, blank=True)
+
+
+
+class PasswordReset(models.Model):
+    user = models.ForeignKey(User)
+    token = models.CharField(max_length=32, null=True, blank=True, unique=True)
+    completed = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return u'%s Token' % self.user
+
+    def save(self, *args, **kwargs):
+        if not self.token:
+            self.token = md5(str(random())).hexdigest()
+        super(PasswordReset, self).save(*args, **kwargs)
 
 
 def get_unique_order_id(instance):

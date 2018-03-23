@@ -27,7 +27,7 @@ SECRET_KEY = 'qzm)=u#tt+w6(a0@p3a)nqwnx+avdkuwl@74bmk0vl_gr+i!j6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '.herokuapp.com', '18.216.190.26']
+ALLOWED_HOSTS = ['127.0.0.1', '18.216.190.26']
 
 
 # Application definition
@@ -158,6 +158,16 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'pulkitjain1607@gmail.com'
+EMAIL_HOST_PASSWORD = '27346504'
+DEFAULT_FROM_EMAIL = 'pulkitjain1607@gmail.com'
+DEFAULT_TO_EMAIL = 'pulkitjain1607@gmail.com'
+DEFAULT_FROM_EMAIL_NAME = 'ALP'
 
 
 # Internationalization
