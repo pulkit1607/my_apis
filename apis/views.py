@@ -24,7 +24,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render
 from apis.models import Category, Hotel, Menu, Profile, Cart, CartDetails, PasswordReset, Order, OrderDetails
 from .serializers import (CategorySerializer, HotelResultsSerializer, MenuSerializer, AuthCustomTokenSerializer,
-                          CartDetailsSerializer, ForgetPasswordSerializer, OrderSerializer, OrderDetailsSerializer)
+                          CartDetailsSerializer, ForgetPasswordSerializer, OrderSerializer, OrderDetailsSerializer, ProfileSerializer)
 from  my_apis.utils import create_username, SendEmail
 import json
 
@@ -456,7 +456,7 @@ class ForgetPasswordView(APIView):
                               {'user': user_request, 'domain': current_site.domain,
                                'token': password_reset.token,
                                },
-                              "Reset your password", ['admin@example.com'])
+                              "Reset your password", [])
             content = {
                 'status': {
                     'isSuccess': True,
@@ -544,3 +544,147 @@ class UserOrderDetailView(APIView):
             }
 
             return Response(content, status.HTTP_400_BAD_REQUEST)
+
+class UserDetailView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    api_docs = {
+        'put': {
+            'fields': [
+                {
+                    'name': 'first_name',
+                    'required': False,
+                    'description': 'First name',
+                    'type': 'string'
+                },
+                {
+                    'name': 'last_name',
+                    'required': False,
+                    'description': 'Last Name',
+                    'type': 'string'
+                },
+                {
+                    'name': 'email',
+                    'required': False,
+                    'description': 'Email',
+                    'type': 'string'
+                },
+                {
+                    'name': 'contact',
+                    'required': False,
+                    'description': 'Contact Info',
+                    'type': 'number'
+                },
+
+            ]
+        }
+    }
+
+    def get(self, request):
+        user = self.request.user
+        if user:
+            profile = Profile.objects.filter(user=user).first()
+            serializer = ProfileSerializer(profile)
+            content = {
+                'status': {
+                    'isSuccess': True,
+                    'code': "SUCCESS",
+                    'message': "profile details",
+                },
+                'details': serializer.data
+            }
+            return Response(content, status.HTTP_200_OK)
+
+        else:
+            content = {
+                'status': {
+                    'isSuccess': False,
+                    'code': "FAILURE",
+                    'message': "User not logged in",
+                }
+            }
+            return Response(content, status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request):
+        user = self.request.user
+        if user:
+            profile = Profile.objects.filter(user=user).first()
+            serializer = ProfileSerializer(profile, data=request.data)
+            print "the serializer is:", serializer
+            if serializer.is_valid():
+                serializer.user=self.request.user.id
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        else:
+
+            content = {
+                'status': {
+                    'isSuccess': False,
+                    'code': "FAILURE",
+                    'message': "User not logged in",
+                }
+            }
+
+            return Response(content, status.HTTP_400_BAD_REQUEST)
+
+class UserUpdateView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    api_docs = {
+        'post': {
+            'fields': [
+                {
+                    'name': 'first_name',
+                    'required': False,
+                    'description': 'First name',
+                    'type': 'string'
+                },
+                {
+                    'name': 'last_name',
+                    'required': False,
+                    'description': 'Last Name',
+                    'type': 'string'
+                },
+                {
+                    'name': 'email',
+                    'required': False,
+                    'description': 'Email',
+                    'type': 'string'
+                },
+                {
+                    'name': 'contact',
+                    'required': False,
+                    'description': 'Contact Info',
+                    'type': 'number'
+                },
+
+            ]
+        }
+    }
+
+    def post(self, request, pk):
+        user = self.request.user
+        if user:
+            user = User.objects.get(id=pk)
+            profile = Profile.objects.filter(user=user).first()
+            serializer = ProfileSerializer(user, data=request.data)
+            print "the serializer is:", serializer
+            if serializer.is_valid():
+                serializer.user = self.request.user.id
+                serializer.save()
+                return Response(serializer.data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            content = {
+                'status': {
+                    'isSuccess': False,
+                    'code': "FAILURE",
+                    'message': "User not logged in",
+                }
+            }
+
+            return Response(content, status.HTTP_400_BAD_REQUEST)
+
+

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Category, Hotel, Menu, CartDetails, Order, OrderDetails
+from .models import Category, Hotel, Menu, CartDetails, Order, OrderDetails, Profile
 from rest_framework.validators import UniqueValidator
 from django.contrib.auth.models import User
 
@@ -57,3 +57,17 @@ class OrderDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderDetails
         fields = ('name', 'amount', 'order')
+
+
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = User
+        fields = ('id', 'first_name', 'last_name', 'email')
+
+class ProfileSerializer(serializers.ModelSerializer):
+
+    user = UserSerializer()
+    class Meta:
+        model = Profile
+        fields = ('user', 'contact')

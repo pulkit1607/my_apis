@@ -160,14 +160,14 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'pulkitjain1607@gmail.com'
-EMAIL_HOST_PASSWORD = '27346504'
-DEFAULT_FROM_EMAIL = 'pulkitjain1607@gmail.com'
-DEFAULT_TO_EMAIL = 'pulkitjain1607@gmail.com'
-DEFAULT_FROM_EMAIL_NAME = 'ALP'
+# EMAIL_USE_TLS = True
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = 'pulkitjain1607@gmail.com'
+# EMAIL_HOST_PASSWORD = '27346504'
+# DEFAULT_FROM_EMAIL = 'pulkitjain1607@gmail.com'
+# DEFAULT_TO_EMAIL = 'pulkitjain1607@gmail.com'
+# DEFAULT_FROM_EMAIL_NAME = 'ALP'
 
 
 # Internationalization
