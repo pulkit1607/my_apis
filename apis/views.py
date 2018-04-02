@@ -280,6 +280,7 @@ class UserLoginView(APIView):
 
             if user:
                 if user.is_active:
+                    profile = Profile.objects.get(user=user)
                     token, created = Token.objects.get_or_create(user=user)
                     content = {
                         'status': {
@@ -288,7 +289,10 @@ class UserLoginView(APIView):
                             'message': "Success"
                         },
                         'token': token.key,
-                        'employee': serializer.data
+                        'employee': serializer.data,
+                        'contact': profile.contact,
+                        'name': user.first_name,
+                        'id': user.id
                     }
 
                     return Response(content, status.HTTP_200_OK)
