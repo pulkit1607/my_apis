@@ -491,7 +491,8 @@ class UserOrdersView(APIView):
                         'isSuccess': True,
                         'code': "SUCCESS",
                         'message': "No Orders Yet",
-                    }
+                    },
+                    'details': {}
                 }
                 return Response(content, status.HTTP_200_OK)
             else:
