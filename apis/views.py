@@ -92,12 +92,11 @@ class ResultsView(GenericAPIView):
                 if Menu.objects.filter(hotel=each, category=pk):
                     new_list.append(each)
 
-            print "The list is :", new_list
             serializer = HotelResultsSerializer(new_list, many=True)
             # return Response(data=lsit_1, status=status.HTTP_200_OK, content_type="application/json")
             return Response(serializer.data)
 
-class HotelMenuView(GenericAPIView):
+class HotelMenuView(APIView):
     # api_docs = {
     #     'get': {
     #         'fields': [
@@ -122,8 +121,29 @@ class HotelMenuView(GenericAPIView):
     def get(self, request, pk, *args, **kwargs):
         hotel = self.get_object(pk)
         menu = Menu.objects.filter(hotel=hotel)
+        print "The menu is:", menu
         serializer = MenuSerializer(menu, many=True)
-        return Response(serializer.data)
+        if not menu:
+            content = {
+                'status': {
+                    'isSuccess': True,
+                    'code': "SUCCESS",
+                    'message': "No Menu items.",
+                },
+                'details': {}
+            }
+            return Response(content, status.HTTP_200_OK)
+        else:
+            content = {
+                'status': {
+                    'isSuccess': True,
+                    'code': "SUCCESS",
+                    'message': "Menu items",
+                },
+                'details': serializer.data
+            }
+            return Response(content, status.HTTP_200_OK)
+
 
 class SignUpView(APIView):
     api_docs = {
@@ -271,7 +291,7 @@ class UserLoginView(APIView):
                         'code': "FAILURE",
                         'message': "Invalid Credentials",
                     },
-                    'error': "Either email or password is incorrect."
+                    'error': "Either email or password is incorrect.",
                 }
                 return Response(content, status.HTTP_400_BAD_REQUEST)
 
@@ -303,7 +323,7 @@ class UserLoginView(APIView):
                             'code': "FAILURE",
                             'message': "Permission Denied",
                         },
-                        'error': "Your access to this portal is restricted by your comapny."
+                        'error': "User not active."
                     }
 
                     return Response(content, status.HTTP_400_BAD_REQUEST)
