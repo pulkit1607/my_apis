@@ -130,7 +130,7 @@ class HotelMenuView(APIView):
                     'code': "SUCCESS",
                     'message': "No Menu items.",
                 },
-                'details': {}
+                'details': []
             }
             return Response(content, status.HTTP_200_OK)
         else:
