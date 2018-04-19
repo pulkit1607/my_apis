@@ -512,7 +512,7 @@ class UserOrdersView(APIView):
                         'code': "SUCCESS",
                         'message': "No Orders Yet",
                     },
-                    'details': {}
+                    'details': []
                 }
                 return Response(content, status.HTTP_200_OK)
             else:
