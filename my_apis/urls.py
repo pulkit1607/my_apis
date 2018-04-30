@@ -15,6 +15,9 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from apis.views import *
+from django.conf import settings
+from django.conf.urls.static import static
 
 from my_apis.schema_generator import get_swagger_view
 
@@ -25,5 +28,19 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include('apis.urls')),
     url(r'^api-docs/', schema_view),
+    # url(r'^hotel/(?P<pk>[0-9]+)/dashboard/$', DashBoardView.as_view(), name='dashboard-view'),
+    url(r'^hotel/dashboard/$', DashBoardView.as_view(), name='dashboard-view'),
+    url(r'^vendor/login/$', VendorLoginView.as_view(), name='vendor-login-view'),
+    url(r'^vendor/logout/$', VendorLogoutView.as_view(), name='vendor-logout'),
+    url(r'^order/(?P<pk>[0-9]+)/details/$', CustomerOrderDetails.as_view(), name='customer-order-details'),
+    # url(r'^vendor/(?P<pk>[0-9]+)/menu/$', VendorMenuView.as_view(), name='vendor-menu-view'),
+    url(r'^vendor/menu/$', VendorMenuView.as_view(), name='vendor-menu-view'),
+    url(r'^vendor/location/$', VendorLocationListView.as_view(), name='vendor-location-list'),
+    url(r'^vendor/location/add/$', VendorLocationAddView.as_view(), name='vendor-add-location'),
+    url(r'^vendor/location/(?P<pk>[0-9]+)/update/$', VendorLocationUpdateView.as_view(), name='vendor-update-location'),
+    url(r'^vendor/menu/upload/$', VendorMenuUploadView.as_view(), name='vendor-menu-upload'),
+    url(r'^vendor/orders/list/$', VendorOrderListView.as_view(), name='vendor-orders-list'),
 
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

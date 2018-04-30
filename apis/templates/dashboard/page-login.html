@@ -1,0 +1,144 @@
+{% load static from staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Foodmin : Widget</title>
+
+	<!-- ================= Favicon ================== -->
+    <!-- Standard -->
+    <link rel="shortcut icon" href="http://placehold.it/64.png/000/fff">
+    <!-- Retina iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="144x144" href="http://placehold.it/144.png/000/fff">
+    <!-- Retina iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="114x114" href="http://placehold.it/114.png/000/fff">
+    <!-- Standard iPad Touch Icon-->
+    <link rel="apple-touch-icon" sizes="72x72" href="http://placehold.it/72.png/000/fff">
+    <!-- Standard iPhone Touch Icon-->
+    <link rel="apple-touch-icon" sizes="57x57" href="http://placehold.it/57.png/000/fff">
+
+	<!-- Styles -->
+    <link href="{% static 'assets/css/lib/font-awesome.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/lib/themify-icons.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/lib/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/lib/weather-icons.css' %}" rel="stylesheet" />
+    <link href="{% static 'assets/css/lib/mmc-chat.css' %}" rel="stylesheet" />
+    <link href="{% static 'assets/css/lib/sidebar.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/lib/sweetalert/sweetalert.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/lib/unix.css' %}" rel="stylesheet">
+    <link href="{% static 'assets/css/style.css' %}" rel="stylesheet">
+</head>
+
+<body class="bg-primary">
+
+	<div class="unix-login">
+		<div class="container">
+			<div class="row">
+				<div class="col-lg-6 col-lg-offset-3">
+					<div class="login-content">
+						<div class="login-logo">
+							<a href="index.html"><span>FingerTips Vendor Login</span></a>
+						</div>
+						<div class="login-form">
+							<h4>Administratior Login</h4>
+							<form method="post">{% csrf_token %}
+								<div class="form-group">
+									<label>Email address</label>
+									<input type="email" class="form-control" placeholder="Email" name="email">
+								</div>
+								<div class="form-group">
+									<label>Password</label>
+									<input type="password" class="form-control" placeholder="Password" name="password">
+								</div>
+								<div class="checkbox">
+									<label>
+										<input type="checkbox"> Remember Me
+									</label>
+									<label class="pull-right">
+										<a href="#">Forgotten Password?</a>
+									</label>
+									
+								</div>
+								<button type="submit" class="btn btn-primary btn-flat m-b-30 m-t-30">Sign in</button>
+{#								<div class="social-login-content">#}
+{#									<div class="social-button">#}
+{#										<button type="button" class="btn btn-primary bg-facebook btn-flat btn-addon m-b-10"><i class="ti-facebook"></i>Sign in with facebook</button>#}
+{#										<button type="button" class="btn btn-primary bg-twitter btn-flat btn-addon m-t-10"><i class="ti-twitter"></i>Sign in with twitter</button>#}
+{#									</div>#}
+{#								</div>#}
+								<div class="register-link m-t-15 text-center">
+									<p>Don't have account ? <a href="#"> Sign Up Here</a></p>
+								</div>
+							</form>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+    <div id="no_admin" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" style="margin-top: 30px;width: 500px;">
+        <div class="modal-content">
+            <div class="modal-header md-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <i class="fa fa-times-circle fa-lg" aria-hidden="true" style="color: black;"></i>
+                </button>
+                <h4 class="modal-title">Vendor Info</h4>
+            </div>
+            <div class="modal-body md-body">
+                <p>Sorry you are not a admin of any of your branches</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="no_user" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog" style="margin-top: 30px;width: 500px;">
+        <div class="modal-content">
+            <div class="modal-header md-header">
+                <button type="button" class="close" data-dismiss="modal">
+                    <i class="fa fa-times-circle fa-lg" aria-hidden="true" style="color: black;"></i>
+                </button>
+                <h4 class="modal-title md-title">Vendor Info</h4>
+            </div>
+            <div class="modal-body md-body">
+                <p>Sorry No user Found.Kindly SignUp first.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<button class="btn btn-danger btn sweet-wrong" style="display: none;">Sweet Wrong</button>
+
+</body>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="{% static 'assets/js/lib/sweetalert/sweetalert.min.js' %}"></script><!-- scripit init-->
+<script src="{% static 'assets/js/lib/sweetalert/sweetalert.init.js' %}"></script><!-- scripit init-->
+
+<script>
+
+    jQuery(document).ready(function () {
+        var status_user = "{{ status_user }}";
+        var status = "{{ status }}";
+
+        console.log('Error');
+        if(status){
+{#            $("#no_user").modal('show');#}
+            $('.sweet-wrong').click();
+        }
+
+        if(status_user){
+            $('.sweet-wrong').click();
+        }
+    })
+
+</script>
+
+</html>

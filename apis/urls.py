@@ -2,7 +2,8 @@ from django.conf.urls import url, include
 from rest_framework.urlpatterns import format_suffix_patterns
 from .views import (CategoryView, ResultsView, HotelMenuView, UserLoginView, SignUpView,
                     AddToCartView, CartDetailView, ForgetPasswordView, ResetPasswordView,
-                    UserOrdersView, UserOrderDetailView, UserDetailView, UserUpdateView)
+                    UserOrdersView, UserOrderDetailView, UserDetailView, UserUpdateView,
+                    HotelOrdersView)
 
 urlpatterns = {
     url(r'^categorys/$', CategoryView.as_view(), name='category'),
@@ -18,6 +19,8 @@ urlpatterns = {
     url(r'^v1/user/(?P<pk>[0-9]+)/update/$', UserUpdateView.as_view(), name='user-update'),
     url(r'^v1/forget/password/$', ForgetPasswordView.as_view(), name='forget-password'),
     url(r'^v1/reset-password/(?P<token>\w+)/$', ResetPasswordView.as_view(), name='reset-password'),
+    # url(r'^hotel/(?P<pk>[0-9]+)/orders/$', HotelOrdersView.as_view(), name="hotel-menu"),
+
 
 }
 

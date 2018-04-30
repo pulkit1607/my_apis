@@ -4,6 +4,7 @@ from __future__ import unicode_literals
 from django.views import View
 from django.views.generic import TemplateView
 from rest_framework import generics, schemas
+from datetime import date, timedelta
 
 from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView
@@ -14,20 +15,23 @@ from rest_framework.authtoken.models import Token
 
 from django.http import Http404, HttpResponseRedirect
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate
+from django.contrib.auth import authenticate, login, get_backends, logout
 from django.contrib.gis.geos import Point
 from django.contrib.gis.measure import Distance
 from rest_framework.status import HTTP_401_UNAUTHORIZED
 from django.contrib.auth.models import User
 from django.contrib.sites.shortcuts import get_current_site
 
-from django.shortcuts import render
-from apis.models import Category, Hotel, Menu, Profile, Cart, CartDetails, PasswordReset, Order, OrderDetails
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render, redirect
+from apis.models import Category, Hotel, Menu, Profile, Cart, CartDetails, PasswordReset, Order, OrderDetails, HotelBranch, HotelAdmin
 from .serializers import (CategorySerializer, HotelResultsSerializer, MenuSerializer, AuthCustomTokenSerializer,
-                          CartDetailsSerializer, ForgetPasswordSerializer, OrderSerializer, OrderDetailsSerializer, ProfileSerializer)
+                          CartDetailsSerializer, ForgetPasswordSerializer, OrderSerializer, OrderDetailsSerializer, ProfileSerializer,
+                          HotelOrderSerializer)
 from  my_apis.utils import create_username, SendEmail
+from my_apis.mixins import ControlMixin
+from apis.forms import AddLocationForm, AddMenuForm
 import json
-
 
 # Create your views here.
 
@@ -86,10 +90,10 @@ class ResultsView(GenericAPIView):
             radius = 10
             point = Point(lng, lat)
             new_list = []
-            list = Hotel.objects.filter(location__distance_lt=(point, Distance(km=radius)))
+            list = HotelBranch.objects.filter(location__distance_lt=(point, Distance(km=radius)))
 
             for each in list:
-                if Menu.objects.filter(hotel=each, category=pk):
+                if Menu.objects.filter(hotel_branch=each, category=pk):
                     new_list.append(each)
 
             serializer = HotelResultsSerializer(new_list, many=True)
@@ -114,14 +118,13 @@ class HotelMenuView(APIView):
 
     def get_object(self, pk):
         try:
-            return Hotel.objects.get(pk=pk)
+            return HotelBranch.objects.get(pk=pk)
         except Hotel.DoesNotExist:
             raise Http404
 
     def get(self, request, pk, *args, **kwargs):
-        hotel = self.get_object(pk)
-        menu = Menu.objects.filter(hotel=hotel)
-        print "The menu is:", menu
+        hotel_branch = self.get_object(pk)
+        menu = Menu.objects.filter(hotel_branch=hotel_branch)
         serializer = MenuSerializer(menu, many=True)
         if not menu:
             content = {
@@ -382,10 +385,10 @@ class AddToCartView(APIView):
                 cart=cart,
                 product=obj,
                 price=obj.price,
+                qty = qty,
+                product_name = obj.name,
             )
-            cart_details.qty=qty
-            cart_details.product_name=obj.name
-            cart_details.save()
+
             content = {
                 'status': {
                     'isSuccess': True,
@@ -713,3 +716,265 @@ class UserUpdateView(APIView):
             return Response(content, status.HTTP_400_BAD_REQUEST)
 
 
+class HotelOrdersView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get_object(self, pk):
+        try:
+            return Hotel.objects.get(pk=pk)
+        except Hotel.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, *args, **kwargs):
+        hotel = self.get_object(pk)
+        if hotel.user == request.user:
+            print "hotel name", hotel.name
+            order = Order.objects.filter(hotel=hotel)
+            print "the orders are:", order
+            serializer = HotelOrderSerializer(order, many=True)
+            print "The serializer data is:", serializer.data
+            if order:
+                content = {
+                    'status': {
+                        'isSuccess': True,
+                        'code': "SUCCESS",
+                        'message': "Order Items.",
+                    },
+                    'details': serializer.data
+                }
+                return Response(content, status.HTTP_200_OK)
+
+            else:
+                content = {
+                    'status': {
+                        'isSuccess': True,
+                        'code': "SUCCESS",
+                        'message': "Sorry No Order Items.",
+                    },
+                    'details': []
+                }
+                return Response(content, status.HTTP_200_OK)
+        else:
+            content = {
+                'status': {
+                    'isSuccess': False,
+                    'code': "FAILURE",
+                    'message': "Sorry, You cannot view other hotel orders",
+                },
+            }
+            return Response(content, status.HTTP_400_BAD_REQUEST)
+
+
+##Beginning of views of dashboard.APIS to be written above it only.##
+
+class DashBoardView(TemplateView, LoginRequiredMixin, ControlMixin):
+    template_name = 'dashboard/index.html'
+
+    def get_context_data(self,**kwargs):
+        context = super(DashBoardView,self).get_context_data(**kwargs)
+        user = self.request.user
+        admin = HotelAdmin.objects.filter(user=user).first()
+        orders = Order.objects.filter(hotel=admin.hotel).filter(date=date.today())
+        amount = 0
+        for item in orders:
+            if item.accepted:
+                amount = amount + int(item.total_amount)
+
+        # context['branch'] = branch
+        context['orders'] = orders
+        context['count'] = orders.count()
+        context['amount'] = amount
+        context['admin'] = admin
+        context['date'] = date.today()
+        return context
+        # else:
+        #     status_user = True
+        #     context = {'status_user': status_user}
+        #     return render(self.request, 'dashboard/page-login.html', context)
+
+
+
+class VendorLoginView(View):
+    template_name = "dashboard/page-login.html"
+
+    def get(self, request, *args, **kwargs):
+        context = {}
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        email = self.request.POST.get('email')
+        password = self.request.POST.get('password')
+
+        user = User.objects.filter(email__iexact=email).first()
+
+        if not user:
+            status_user = True
+            context = {'status_user': status_user}
+            return render(request, self.template_name, context)
+
+        username = user.username
+
+        user = authenticate(username=username, password=password)
+
+        if user is not None:
+            logout(request)
+            login(request, user)
+            admin = HotelAdmin.objects.filter(user=user).first()
+            if admin:
+                # url = "/hotel/" + str(admin.hotel.id) + "/dashboard/"
+                url = "/hotel/dashboard/"
+                return HttpResponseRedirect(url)
+
+            else:
+                status = True
+                context = {'status': status}
+                return render(request, self.template_name, context)
+
+
+class VendorLogoutView(View):
+    def get(self, request, *args, **kwargs):
+        logout(request)
+        return redirect("/vendor/login/")
+
+class CustomerOrderDetails(TemplateView, LoginRequiredMixin, ControlMixin):
+    template_name = 'dashboard/table-basic.html'
+
+    def get_context_data(self,**kwargs):
+        context = super(CustomerOrderDetails,self).get_context_data(**kwargs)
+        order = Order.objects.filter(id=kwargs['pk']).first()
+        order_details = OrderDetails.objects.filter(order=kwargs['pk'])
+        context['details'] = order_details
+        context['order'] = order
+        context['admin'] =  HotelAdmin.objects.filter(user=self.request.user).first()
+        return context
+
+
+class VendorMenuView(TemplateView, LoginRequiredMixin, ControlMixin):
+    template_name = 'dashboard/restaurant-menu-two.html'
+
+    def get_context_data(self,**kwargs):
+        context = super(VendorMenuView,self).get_context_data(**kwargs)
+        user = self.request.user
+        admin = HotelAdmin.objects.filter(user=user).first()
+        # hotel = Hotel.objects.filter(id=kwargs['pk']).first()
+        menu = Menu.objects.filter(hotel=admin.hotel)
+        context['menu'] = menu
+        context['admin'] = HotelAdmin.objects.filter(user=self.request.user).first()
+        return context
+
+
+class VendorLocationListView(TemplateView, LoginRequiredMixin):
+    template_name = 'dashboard/restaurant-menu-one.html'
+
+    def get_context_data(self,**kwargs):
+        context = super(VendorLocationListView,self).get_context_data(**kwargs)
+        user = self.request.user
+        admin = HotelAdmin.objects.filter(user=user).first()
+        loc_list = HotelBranch.objects.filter(hotel=admin.hotel)
+        context['loc_list'] = loc_list
+        context['admin'] = HotelAdmin.objects.filter(user=self.request.user).first()
+        return context
+
+class VendorLocationAddView(TemplateView, LoginRequiredMixin):
+    template_name = 'dashboard/form-basic.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(VendorLocationAddView, self).get_context_data(**kwargs)
+        form = AddLocationForm(self.request.POST or None)
+        context['form'] = form
+        context['admin'] = HotelAdmin.objects.filter(user=self.request.user).first()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        admin = HotelAdmin.objects.filter(user=user).first()
+        form = AddLocationForm(self.request.POST)
+        if form.is_valid():
+            hotel_branch = form.save(commit=False)
+            hotel_branch.hotel = admin.hotel
+            hotel_branch.save()
+            url = '/hotel/dashboard/'
+            return HttpResponseRedirect(url)
+        else:
+            status = True
+            context = {'status': status}
+            return render(request, self.template_name, context)
+
+
+class VendorLocationUpdateView(TemplateView, LoginRequiredMixin):
+    template_name = 'dashboard/vendor-location-update.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(VendorLocationUpdateView, self).get_context_data(**kwargs)
+        hotel_branch = HotelBranch.objects.filter(id=kwargs['pk']).first()
+        print "the hotel branch is:", hotel_branch
+        form = AddLocationForm(self.request.POST or None)
+        context['form'] = form
+        context['branch'] = hotel_branch
+        context['admin'] = HotelAdmin.objects.filter(user=self.request.user).first()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        admin = HotelAdmin.objects.filter(user=user).first()
+        hotel_branch = HotelBranch.objects.filter(id=kwargs['pk']).first()
+        form = AddLocationForm(self.request.POST, instance=hotel_branch)
+        print "The form is:", form
+        if form.is_valid():
+            form.save()
+            url = '/vendor/location/'
+            return HttpResponseRedirect(url)
+        else:
+            print "Inside Form Invalid"
+            status = True
+            context = {'status': status}
+            return render(request, self.template_name, context)
+
+
+class VendorMenuUploadView(TemplateView, LoginRequiredMixin):
+    template_name = 'dashboard/restaurant-upload-menu.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(VendorMenuUploadView, self).get_context_data(**kwargs)
+        admin = HotelAdmin.objects.filter(user=self.request.user).first()
+        form = AddMenuForm(self.request.POST or None, self.request.FILES or None)
+        context['form'] = form
+        context['admin'] = HotelAdmin.objects.filter(user=self.request.user).first()
+        context['category'] = Category.objects.all()
+        context['branch'] = HotelBranch.objects.filter(hotel = admin.hotel)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        user = request.user
+        admin = HotelAdmin.objects.filter(user=user).first()
+        form = context['form']
+        if form.is_valid():
+            menu = form.save(commit=False)
+            menu.hotel = admin.hotel
+            menu.image = request.FILES.get("image")
+            menu.save()
+            url = '/vendor/menu'
+            return HttpResponseRedirect(url)
+        else:
+            context['form'] = form
+            return render(request, self.template_name, context)
+
+
+
+class VendorOrderListView(TemplateView, LoginRequiredMixin):
+    template_name = 'dashboard/restaurant-order-list.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(VendorOrderListView, self).get_context_data(**kwargs)
+        admin = HotelAdmin.objects.filter(user=self.request.user).first()
+        amount = 0
+        orders = Order.objects.filter(hotel=admin.hotel)
+        for each in orders:
+            if each.accepted:
+                amount = amount + int(each.total_amount)
+        context['orders'] = orders
+        context['admin'] = HotelAdmin.objects.filter(user=self.request.user).first()
+        context['amount'] = amount
+        context['count'] = orders.count()
+        return context

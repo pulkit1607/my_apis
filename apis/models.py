@@ -18,9 +18,16 @@ class Category(models.Model):
     def __unicode__(self):
         return self.category
 
+
 class Hotel(models.Model):
-    user = models.ForeignKey(User, null=True, blank=True)
     name = models.CharField(max_length=250, null=True, blank=True)
+
+    def __unicode__(self):
+        return self.name
+
+class HotelBranch(models.Model):
+    branch_name = models.CharField(max_length=250, null=True, blank=True)
+    hotel = models.ForeignKey(Hotel)
     contact_number = models.CharField(max_length=250, null=True, blank=True)
     contact_person_name = models.CharField(max_length=250, null=True, blank=True)
     address = models.CharField(max_length=500, null=True, blank=True)
@@ -32,13 +39,24 @@ class Hotel(models.Model):
     objects = models.GeoManager()
 
     def __unicode__(self):
-        return self.name
+        return self.branch_name
 
     def save(self, *args, **kwargs):
         lat = self.lat
         long = self.long
         self.location = Point(long,lat)
-        super(Hotel, self).save(*args, **kwargs)
+        super(HotelBranch, self).save(*args, **kwargs)
+
+
+class HotelAdmin(models.Model):
+    user = models.ForeignKey(User)
+    hotel_branch = models.ForeignKey(HotelBranch, null=True, blank=True)
+    hotel = models.ForeignKey(Hotel, null=True, blank=True)
+    is_admin = models.BooleanField(default=False)
+
+    def __unicode__(self):
+        return self.user.username
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User)
@@ -55,8 +73,10 @@ class Profile(models.Model):
 class Menu(models.Model):
     hotel = models.ForeignKey(Hotel)
     category = models.ForeignKey(Category)
+    hotel_branch = models.ForeignKey(HotelBranch, null=True, blank=True)
     name = models.CharField(max_length=500, null=True, blank=True)
     decscription = models.TextField(null=True, blank=True)
+    image = models.ImageField(upload_to="images/", null=True, blank=True)
     price = models.IntegerField(default=0)
 
     def __unicode__(self):
@@ -66,8 +86,11 @@ class Order(models.Model):
     customer = models.ForeignKey(Profile)
     order_id = models.CharField(max_length=32, unique=True)
     hotel = models.ForeignKey(Hotel)
+    hotel_branch = models.ForeignKey(HotelBranch, null=True, blank=True)
     total_amount = models.CharField(max_length=50, null=True)
+    date = models.DateField(null=True, blank=False)
     time = models.CharField(max_length=100, null=True, blank=True)
+    number_of_persons = models.IntegerField(null=True, blank=True)
     accepted = models.BooleanField(default=False)
     rejected = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
@@ -86,6 +109,7 @@ class Order(models.Model):
 class OrderDetails(models.Model):
     order = models.ForeignKey(Order)
     name = models.CharField(max_length=300, null=True)
+    qty = models.IntegerField(default=1, null=True, blank=True)
     amount = models.CharField(max_length=250, null=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)

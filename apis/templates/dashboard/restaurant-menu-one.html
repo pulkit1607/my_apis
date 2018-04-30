@@ -1,0 +1,64 @@
+{% extends 'dashboard-base.html' %}
+{% load static from staticfiles %}
+{% block content %}
+
+    <div class="content-wrap">
+        <div class="main">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-8 p-0">
+                        <div class="page-header">
+                            <div class="page-title">
+                                <h1>Locations</h1>
+                            </div>
+                        </div>
+                    </div><!-- /# column -->
+                    <div class="col-lg-4 p-0">
+                        <div class="page-header">
+                            <div class="page-title">
+{#                                <ol class="breadcrumb text-right">#}
+{#                                    <li><a href="#">Dashboard</a></li>#}
+{#                                    <li><a href="#">Components </a></li>#}
+{#                                    <li class="active">Products-1</li>#}
+{#                                </ol>#}
+                            </div>
+                        </div>
+                    </div><!-- /# column -->
+                </div><!-- /# row -->
+
+                <div class="main-content">
+                    <div class="row">
+                        {% for item in loc_list %}
+                        <div class="col-lg-4">
+                            <div class="card alert" style="padding: 28px;">
+                                <div class="products_1 text-center">
+                                    <div class="product_details">
+                                        <div class="product_name">
+                                            <h4>{{ item.branch_name }}</h4>
+                                        </div>
+                                        <div class="product_des">
+                                            <p>{{ item.address }}, {{ item.city }}, {{ item.state }}</p>
+                                        </div>
+                                        <div class="prdt_add_to_cart">
+                                            <a href="{% url 'vendor-update-location' item.id %}"><button type="button" class="btn btn-primary btn-rounded  m-l-5">Update</button></a>
+                                        </div>
+                                    </div>
+
+                                </div>
+							</div><!-- /# card -->
+						</div><!-- /# column -->
+                        {% if forloop.counter|divisibleby:3 %}
+                            </div></div>
+                            <div class="main-content">
+                            <div class="row">
+                        {% endif %}
+                        {% endfor %}
+					</div><!-- /# row -->
+                </div><!-- /# main content -->
+
+
+            </div><!-- /# container-fluid -->
+        </div><!-- /# main -->
+    </div><!-- /# content wrap -->
+
+{% endblock %}
