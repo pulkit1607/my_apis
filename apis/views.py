@@ -32,6 +32,9 @@ from  my_apis.utils import create_username, SendEmail
 from my_apis.mixins import ControlMixin
 from apis.forms import AddLocationForm, AddMenuForm
 import json
+import requests
+import httplib
+# from googlemaps import GoogleMaps
 
 # Create your views here.
 
@@ -68,7 +71,7 @@ class ResultsView(GenericAPIView):
         }
     }
 
-    def get(self,request, pk, *args, **kwargs):
+    def get(self,request, *args, **kwargs):
         # lat = 28.500981
         # lng = 77.0785523
 
@@ -93,7 +96,7 @@ class ResultsView(GenericAPIView):
             list = HotelBranch.objects.filter(location__distance_lt=(point, Distance(km=radius)))
 
             for each in list:
-                if Menu.objects.filter(hotel_branch=each, category=pk):
+                if Menu.objects.filter(hotel_branch=each):
                     new_list.append(each)
 
             serializer = HotelResultsSerializer(new_list, many=True)
@@ -217,6 +220,36 @@ class SignUpView(APIView):
 
         user = User.objects.create_user(create_username(name),email, password)
         user.first_name = name
+
+
+        # conn = http.client.HTTPConnection("api.msg91.com")
+        #
+        # conn.request("GET",
+        #              "/api/sendhttp.php?sender=MSGIND&route=4&mobiles=7011925220&authkey=213198AK91IRPFWN5ae7efcf&encrypt=&country=0&message=Hello!%20This%20is%20a%20test%20message&flash=&unicode=&schtime=&afterminutes=&response=&campaign=")
+        #
+        # res = conn.getresponse()
+        # data = res.read()
+        #
+        # print(data.decode("utf-8"))
+
+        # url = "/api/sendhttp.php?sender=MSGIND&route=4&mobiles=7011925220&authkey=213198AK91IRPFWN5ae7efcf&encrypt=&country=0&message=Hello!%20This%20is%20a%20test%20message&flash=&unicode=&schtime=&afterminutes=&response=&campaign="
+        # r = requests.get(url)
+        # print r
+
+        conn = httplib.HTTPConnection("control.msg91.com")
+        payload = ""
+        # conn.request("GET",
+        #              "/api/sendhttp.php?sender=MSGIND&route=4&mobiles=7011925220&authkey=213198AK91IRPFWN5ae7efcf&encrypt=&country=0&message=Hello!%20This%20is%20a%20test%20message&flash=&unicode=&schtime=&afterminutes=&response=&campaign=")
+
+        conn.request("POST",
+                     "/api/sendotp.php?template=&otp_length=6&authkey213198AK91IRPFWN5ae7efc=&message=Your Otp is:&sender=OTPSMS&mobile=7011925220&otp=701198&otp_expiry=&email=",
+                     payload)
+
+        res = conn.getresponse()
+        data = res.read()
+        print "the data is:", data
+
+
         user.is_active = True
         user.save()
         profile, created = Profile.objects.get_or_create(user=user)
@@ -892,6 +925,10 @@ class VendorLocationAddView(TemplateView, LoginRequiredMixin):
         if form.is_valid():
             hotel_branch = form.save(commit=False)
             hotel_branch.hotel = admin.hotel
+            # gmaps = GoogleMaps('AIzaSyB8L5XklsbEJ-_R5v-YJe7Znl08m-4n2Zw')
+            # address = form.cleaned_data['address'] +','+ form.cleaned_data['city'] + ',' + form.cleaned_data['state'] + ',' + 'IN'
+            # lat, lng = gmaps.address_to_latlng(address)
+            # print "the lat long is:", lat, lng
             hotel_branch.save()
             url = '/hotel/dashboard/'
             return HttpResponseRedirect(url)
