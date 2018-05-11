@@ -27,7 +27,7 @@ SECRET_KEY = 'qzm)=u#tt+w6(a0@p3a)nqwnx+avdkuwl@74bmk0vl_gr+i!j6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1', '18.216.190.26']
+ALLOWED_HOSTS = ['127.0.0.1', '18.216.190.26', 'http://queued.co.in/']
 
 
 # Application definition
