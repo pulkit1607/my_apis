@@ -12,6 +12,12 @@ from random import random
 from random import randint
 # Create your models here.
 
+TYPE_CHOICES = (
+    (0, "NONE"),
+    (1, "VEG"),
+    (2, "NON-VEG"),
+)
+
 class Category(models.Model):
     category = models.CharField(max_length=250, null=True, blank=True)
 
@@ -77,10 +83,14 @@ class Menu(models.Model):
     name = models.CharField(max_length=500, null=True, blank=True)
     decscription = models.TextField(null=True, blank=True)
     image = models.ImageField(upload_to="images/", null=True, blank=True)
+    type = models.CharField(max_length=200, null=True, blank=True)
     price = models.IntegerField(default=0)
 
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.hotel)
+
+    def get_type(self):
+        return dict(TYPE_CHOICES).get(self.type)
 
 class Order(models.Model):
     customer = models.ForeignKey(Profile)
@@ -147,6 +157,18 @@ class CartDetails(models.Model):
     price = models.IntegerField(default=0, null=True, blank=True)
     qty = models.IntegerField(default=1, null=True, blank=True)
 
+
+class Review(models.Model):
+    order = models.ForeignKey(Order)
+    customer = models.ForeignKey(Profile)
+    cust_rating_hotel = models.FloatField(default=0, null=True, blank=True)
+    cust_rating_food = models.FloatField(default=0, null=True, blank=True)
+    hotel_rating = models.FloatField(default=0, null=True, blank=True)
+    cust_comments = models.TextField(null=True, blank=True)
+    hotel_comments = models.TextField(null=True, blank=True)
+
+    def __unicode__(self):
+        return self.order.order_id
 
 
 class PasswordReset(models.Model):

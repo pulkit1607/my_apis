@@ -990,6 +990,7 @@ class VendorMenuUploadView(TemplateView, LoginRequiredMixin):
             menu = form.save(commit=False)
             menu.hotel = admin.hotel
             menu.image = request.FILES.get("image")
+            menu.type=form.cleaned_data['type']
             menu.save()
             url = '/vendor/menu'
             return HttpResponseRedirect(url)

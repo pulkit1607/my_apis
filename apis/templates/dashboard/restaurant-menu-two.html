@@ -36,20 +36,20 @@
                     {% for item in menu %}
 
                         <div class="col-lg-4">
-                            <div class="card alert">
+                            <div class="card alert" style="padding: 28px;">
                                 <div class="row">
                                     <div class="col-lg-4">
                                         <div class="product-3-img">
-                                            <img src="{% if item.image %}{{ item.image.url }}{% else %}{% static 'assets/images/product_1/image-8-226x223.jpg'%}{% endif %}" alt="" style="width: 78px; height: 77px;"/>
+                                            <img src="{% if item.image %}{{ item.image.url }}{% else %}{% static 'assets/images/product_1/image-8-226x223.jpg'%}{% endif %}" alt="" style="width: 78px; height: 77px;"/><br>
                                         </div>
                                     </div>
                                     <div class="col-lg-8">
                                         <div class="product_details_3">
                                             <div class="product_name">
-                                                <h4>{{ item.name }}</h4>
+                                                <h4>{{ item.name }} <span style="{% if item.type == 'VEG'  %}color: green;{% elif item.type == 'NON-VEG' %}color: red;{% else %}color: grey{% endif %}">{{ item.get_type }}</span></h4>
                                             </div>
                                             <div class="product_des">
-                                                <p>{{ item.decscription }}.</p>
+                                                <p>{{ item.decscription|truncatechars:10 }}.</p>
                                             </div>
                                             <div class="prdt_add_to_cart">
                                                 <button type="button" class="btn btn-success btn-rounded">Rs. {{ item.price }}</button>
