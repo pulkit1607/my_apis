@@ -46,7 +46,7 @@
                                     <div class="col-lg-8">
                                         <div class="product_details_3">
                                             <div class="product_name">
-                                                <h4>{{ item.name }} <span style="{% if item.type == 'VEG'  %}color: green;{% elif item.type == 'NON-VEG' %}color: red;{% else %}color: grey{% endif %}">{{ item.get_type }}</span></h4>
+                                                <h4>{{ item.name }} <span style="{% if item.type == 'VEG'  %}color: green;{% elif item.type == 'NON-VEG' %}color: red;{% else %}color: grey{% endif %}">{{ item.type }}</span></h4>
                                             </div>
                                             <div class="product_des">
                                                 <p>{{ item.decscription|truncatechars:10 }}.</p>

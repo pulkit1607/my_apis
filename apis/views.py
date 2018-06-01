@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+# from braces.views import AjaxResponseMixin,JSONResponseMixin
 from django.views import View
 from django.views.generic import TemplateView
 from rest_framework import generics, schemas
@@ -30,10 +31,12 @@ from .serializers import (CategorySerializer, HotelResultsSerializer, MenuSerial
                           HotelOrderSerializer)
 from  my_apis.utils import create_username, SendEmail
 from my_apis.mixins import ControlMixin
-from apis.forms import AddLocationForm, AddMenuForm
+from apis.forms import AddLocationForm, AddMenuForm, ContactUsForm
+from my_apis.settings import GOOGLE_MAPS_GEOLOCATION_KEY
 import json
 import requests
 import httplib
+from my_apis import settings
 # from googlemaps import GoogleMaps
 
 # Create your views here.
@@ -819,6 +822,7 @@ class DashBoardView(TemplateView, LoginRequiredMixin, ControlMixin):
         context['amount'] = amount
         context['admin'] = admin
         context['date'] = date.today()
+        context['key_id'] = settings.RAZORPAY_KEY_ID
         return context
         # else:
         #     status_user = True
@@ -925,11 +929,20 @@ class VendorLocationAddView(TemplateView, LoginRequiredMixin):
         if form.is_valid():
             hotel_branch = form.save(commit=False)
             hotel_branch.hotel = admin.hotel
-            # gmaps = GoogleMaps('AIzaSyB8L5XklsbEJ-_R5v-YJe7Znl08m-4n2Zw')
-            # address = form.cleaned_data['address'] +','+ form.cleaned_data['city'] + ',' + form.cleaned_data['state'] + ',' + 'IN'
-            # lat, lng = gmaps.address_to_latlng(address)
-            # print "the lat long is:", lat, lng
+
+            ##Converting address to lat, long using google maps request
+            address = form.cleaned_data['address'] + ',' + form.cleaned_data['city'] + ',' + form.cleaned_data['state'] + 'IN'
+            api_key = GOOGLE_MAPS_GEOLOCATION_KEY
+            api_response = requests.get(
+                'https://maps.googleapis.com/maps/api/geocode/json?address={0}&key={1}'.format(address, api_key))
+            api_response_dict = api_response.json()
+            if api_response_dict['status'] == 'OK':
+                latitude = api_response_dict['results'][0]['geometry']['location']['lat']
+                longitude = api_response_dict['results'][0]['geometry']['location']['lng']
+            hotel_branch.lat = latitude
+            hotel_branch.long = longitude
             hotel_branch.save()
+
             url = '/hotel/dashboard/'
             return HttpResponseRedirect(url)
         else:
@@ -1016,3 +1029,40 @@ class VendorOrderListView(TemplateView, LoginRequiredMixin):
         context['amount'] = amount
         context['count'] = orders.count()
         return context
+
+class VerifyPaymentView(TemplateView):
+    template_name = 'dashboard/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(VerifyPaymentView, self).get_context_data(**kwargs)
+        payment_key = self.request.GET.get('payment_key')
+        payment_price = self.request.GET.get('payment_price')
+
+        url = 'https://api.razorpay.com/v1/payments/' + payment_key + '/capture'
+        r = requests.post(url, data={'amount': payment_price},
+                          auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_KEY))
+        print "the something is:", r.status_code, r.content
+
+        return context
+
+
+class HomeView(TemplateView):
+    template_name = "home.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(HomeView, self).get_context_data(**kwargs)
+        context['form'] = ContactUsForm(self.request.POST)
+        return context
+
+    def post(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        form = context['form']
+        if form.is_valid():
+            contact = form.save(commit=False)
+            contact.save()
+            context['status'] = True
+            return render(request, self.template_name, context)
+
+        else:
+            context['form'] = form
+            return render(request, self.template_name, context)

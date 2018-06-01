@@ -37,7 +37,7 @@
                                             <h4>{{ item.branch_name }}</h4>
                                         </div>
                                         <div class="product_des">
-                                            <p>{{ item.address }}, {{ item.city }}, {{ item.state }}</p>
+                                            <p>{{ item.address|truncatechars:20 }}, {{ item.city }}, {{ item.state }}</p>
                                         </div>
                                         <div class="prdt_add_to_cart">
                                             <a href="{% url 'vendor-update-location' item.id %}"><button type="button" class="btn btn-primary btn-rounded  m-l-5">Update</button></a>

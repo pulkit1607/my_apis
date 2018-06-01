@@ -201,3 +201,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 MEDIA_URL = '/media/'
 # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
+
+# TEST RAZORPAY CREDENTIALS
+RAZORPAY_KEY_ID = "rzp_test_S7gxsV55dTOz1E"
+RAZORPAY_KEY_KEY = "PsQyqccC4iZFH5wcewxIEu35"
+
+GOOGLE_MAPS_GEOLOCATION_KEY = "AIzaSyB8L5XklsbEJ-_R5v-YJe7Znl08m-4n2Zw"

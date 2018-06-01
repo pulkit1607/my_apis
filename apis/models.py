@@ -89,8 +89,6 @@ class Menu(models.Model):
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.hotel)
 
-    def get_type(self):
-        return dict(TYPE_CHOICES).get(self.type)
 
 class Order(models.Model):
     customer = models.ForeignKey(Profile)
@@ -185,6 +183,16 @@ class PasswordReset(models.Model):
         if not self.token:
             self.token = md5(str(random())).hexdigest()
         super(PasswordReset, self).save(*args, **kwargs)
+
+
+class ContactForm(models.Model):
+    name = models.CharField(max_length=250, null=True, blank=True)
+    email = models.CharField(max_length=250, null=True, blank=True)
+    subject = models.CharField(max_length=250, null=True, blank=True)
+    message = models.TextField(null=True, blank=True)
+
+    def __unicode__(self):
+        return self.name
 
 
 def get_unique_order_id(instance):

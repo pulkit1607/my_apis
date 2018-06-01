@@ -1,135 +1,6 @@
 {% extends 'dashboard-base.html' %}
 {% load static from staticfiles %}
 {% block content %}
-
-{#	<div class="chat-sidebar">#}
-{#        <!-- BEGIN chat -->#}
-{#        <div id="mmc-chat" class="color-default">#}
-{#            <!-- BEGIN CHAT BOX -->#}
-{#            <div class="chat-box">#}
-{#                <!-- BEGIN CHAT BOXS -->#}
-{#                <ul class="boxs"></ul>#}
-{#                <!-- END CHAT BOXS -->#}
-{#                <div class="icons-set">#}
-{#                    <div class="stickers">#}
-{#                        <div class="had-container">#}
-{#                            <div class="row">#}
-{#                                <div class="s12">#}
-{#                                    <ul class="tabs" style="width: 100%;height: 60px;">#}
-{#                                        <li class="tab col s3">#}
-{#                                            <a href="#tab1" class="active">#}
-{#                                                <img src="images/1.png" alt="" />#}
-{#                                            </a>#}
-{#                                        </li>#}
-{#                                        <li class="tab col s3"><a href="#tab2">Test 2</a></li>#}
-{#                                    </ul>#}
-{#                                </div>#}
-{#                                <div id="tab1" class="s12 tab-content">#}
-{#                                    <ul>#}
-{#                                        <li><img src="images/1.png" alt="" /></li>#}
-{#                                        <li><img src="images/1.png" alt="" /></li>#}
-{#                                        <li><img src="images/1.png" alt="" /></li>#}
-{#                                        <li><img src="images/1.png" alt="" /></li>#}
-{#                                        <li><img src="images/1.png" alt="" /></li>#}
-{#                                        <li><img src="images/1.png" alt="" /></li>#}
-{#                                        <li><img src="images/1.png" alt="" /></li>#}
-{#                                        <li><img src="images/1.png" alt="" /></li>#}
-{#                                        <li><img src="images/1.png" alt="" /></li>#}
-{#                                        <li><img src="images/1.png" alt="" /></li>#}
-{#                                        <li><img src="images/1.png" alt="" /></li>#}
-{#                                        <li><img src="images/1.png" alt="" /></li>#}
-{#                                        <li><img src="images/1.png" alt="" /></li>#}
-{#                                    </ul>#}
-{#                                </div>#}
-{#                                <div id="tab2" class="s12 tab-content">Test 2</div>#}
-{#                            </div>#}
-{#                        </div>#}
-{#                    </div>#}
-{#                </div>#}
-{#            </div>#}
-{#            <!-- END CHAT BOX -->#}
-{#            <!-- BEGIN SIDEBAR -->#}
-{#            <div id="sidebar" class="right scroll">#}
-{#                <div class="had-container">#}
-{#                    <!-- BEGIN USERS -->#}
-{#                    <div class="users">#}
-{##}
-{#                        <ul class="user-list">#}
-{#                            <!-- BEGIN USER-->#}
-{#                            <li class="user-tooltip" data-id="1" data-status="online" data-username="Rufat Askerov" data-position="left" data-filter-item data-filter-name="rufat askerov">#}
-{#                                <!-- BEGIN USER IMAGE-->#}
-{#                                <div class="user-image">#}
-{#                                    <img src="assets/images/avatar/1.jpg" class="avatar" alt="Rufat Askerov" />#}
-{#                                </div>#}
-{#                                <!-- END USER IMAGE-->#}
-{#                                <!-- BEGIN USERNAME-->#}
-{#                                <span class="user-name">Rufat Askerov</span>#}
-{#								<span class="user-show"></span>#}
-{#                                <!-- END USERNAME-->#}
-{#                            </li>#}
-{#                            <!-- END USER-->#}
-{#                            <!-- BEGIN USER-->#}
-{#                            <li class="user-tooltip" data-id="3" data-status="online" data-username="Alice" data-position="left" data-filter-item data-filter-name="alice">#}
-{#                                <div class="user-image">#}
-{#                                    <img src="assets/images/avatar/1.jpg" class="avatar" alt="Alice" />#}
-{#                                </div>#}
-{#                                <span class="user-name">Alice</span>#}
-{#								<span class="user-show"></span>#}
-{#                            </li>#}
-{##}
-{#                            <!-- BEGIN USER-->#}
-{#                            <li class="user-tooltip" data-id="7" data-status="offline" data-username="Michael Scofield" data-position="left" data-filter-item data-filter-name="michael scofield">#}
-{#                                <div class="user-image">#}
-{#                                    <img src="assets/images/avatar/1.jpg" class="avatar" alt="Michael Scofield" />#}
-{#                                </div>#}
-{#                                <span class="user-name">Michael Scofield</span>#}
-{#								<span class="user-show"></span>#}
-{#                            </li>#}
-{##}
-{#                            <!-- BEGIN USER-->#}
-{#                            <li class="user-tooltip" data-id="5" data-status="online" data-username="Irina Shayk" data-position="left" data-filter-item data-filter-name="irina shayk">#}
-{#                                <div class="user-image">#}
-{#                                    <img src="assets/images/avatar/1.jpg" class="avatar" alt="Irina Shayk" />#}
-{#                                </div>#}
-{#                                <span class="user-name">Irina Shayk</span>#}
-{#								<span class="user-show"></span>#}
-{#                            </li>#}
-{##}
-{#                            <!-- BEGIN USER-->#}
-{#                            <li class="user-tooltip" data-id="6" data-status="offline" data-username="Sara Tancredi" data-position="left" data-filter-item data-filter-name="sara tancredi">#}
-{#                                <div class="user-image">#}
-{#                                    <img src="assets/images/avatar/1.jpg" class="avatar" alt="Sara Tancredi" />#}
-{#                                </div>#}
-{#                                <span class="user-name">Sara Tancredi</span>#}
-{#								<span class="user-show"></span>#}
-{#                            </li>#}
-{##}
-{#                            <!-- BEGIN USER-->#}
-{#                            <li class="user-tooltip" data-id="7" data-status="offline" data-username="Saifun" data-position="left" data-filter-item data-filter-name="saifun">#}
-{#                                <div class="user-image">#}
-{#                                    <img src="assets/images/avatar/1.jpg" class="avatar" alt="Saifun" />#}
-{#                                </div>#}
-{#                                <span class="user-name">Saifun</span>#}
-{#								<span class="user-show"></span>#}
-{#                            </li>#}
-{#                        </ul>#}
-{#						<div class="chat-user-search">#}
-{#							<div class="input-group">#}
-{#								<span class="input-group-addon"><i class="ti-search"></i></span>#}
-{#								<input type="text" class="form-control" placeholder="Search"  data-search />#}
-{#							</div>#}
-{#						</div>#}
-{#                    </div>#}
-{#                    <!-- END USERS -->#}
-{##}
-{#                </div>#}
-{#            </div>#}
-{#            <!-- END SIDEBAR -->#}
-{#        </div>#}
-{#        <!-- END chat -->#}
-{#    </div>#}
-    <!-- END chat Sidebar-->
-
     <div class="content-wrap">
         <div class="main">
             <div class="container-fluid">
@@ -144,10 +15,10 @@
                     <div class="col-lg-4 p-0">
                         <div class="page-header">
                             <div class="page-title">
-                                <ol class="breadcrumb text-right">
-                                    <li><a href="#">Dashboard</a></li>
-                                    <li class="active">Home</li>
-                                </ol>
+{#                                <ol class="breadcrumb text-right">#}
+{#                                    <li><a href="#">Dashboard</a></li>#}
+{#                                    <li class="active">Home</li>#}
+{#                                </ol>#}
                             </div>
                         </div>
                     </div><!-- /# column -->
@@ -400,6 +271,7 @@
                                         </tbody>
                                     </table>
                                 </div>
+                                <a  class="btn btn-default button2" id="rzp-button1" href="">proceed to pay</a>
                             </div>
                         </div><!-- /# column -->
 					</div><!-- /# row -->
@@ -719,9 +591,47 @@
         </div><!-- /# main -->
     </div><!-- /# content wrap -->
 
-
     {% endblock %}
-	
+	{% block extra_js %}
+        <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+	<script>
+	var amount = "200";
+	var options = {
+	    "key": "{{ key_id }}",
+	    "amount": amount,
+	    "name": "Queued",
+	    "description": "Legal Solutions Better Easier Faster",
+	    "handler": function (response){
+	        $('#rzp-button1').button('loading');
+	      	$.ajax({
+	      		url: {% url 'verify_payment' %},
+	      		type:'GET',
+
+	      		data : {'payment_key':response.razorpay_payment_id,'payment_price':amount},
+	      		success:function(ajax_response){
+	      			console.log('here')
+	      		}
+	      	});
+	    },
+	    "prefill": {
+	        "name": "{{ lawyer.user.first_name }} {{ lawyer.user.last_name }}",
+	        "email": "{{ lawyer.user.email }}"
+	    },
+	    "notes": {
+	        "address": ""
+	    },
+	    "theme": {
+	        "color": "#eb6a2b"
+	    }
+	};
+	var rzp1 = new Razorpay(options);
+
+	$("#rzp-button1").click(function(e){
+	    rzp1.open();
+	    e.preventDefault();
+	});
+	</script>
+    {% endblock %}
 
 
 

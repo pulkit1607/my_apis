@@ -40,6 +40,7 @@ urlpatterns = [
     url(r'^vendor/location/(?P<pk>[0-9]+)/update/$', VendorLocationUpdateView.as_view(), name='vendor-update-location'),
     url(r'^vendor/menu/upload/$', VendorMenuUploadView.as_view(), name='vendor-menu-upload'),
     url(r'^vendor/orders/list/$', VendorOrderListView.as_view(), name='vendor-orders-list'),
+    url(r'^verify-payment/$',VerifyPaymentView.as_view(), name='verify_payment'),
 
 ]
 if settings.DEBUG:
