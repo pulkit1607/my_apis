@@ -6,7 +6,6 @@ from .views import (CategoryView, ResultsView, HotelMenuView, UserLoginView, Sig
                     HotelOrdersView, HomeView)
 
 urlpatterns = {
-    url(r'^$', HomeView.as_view(), name='home'),
     url(r'^categorys/$', CategoryView.as_view(), name='category'),
     url(r'^results/$', ResultsView.as_view(), name='results'),
     url(r'^hotel/(?P<pk>[0-9]+)/menu/$', HotelMenuView.as_view(), name="hotel-menu"),

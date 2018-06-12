@@ -1,91 +1,534 @@
-{#<!DOCTYPE html>#}
-{#<html>#}
-{#<head>#}
-{#    <meta charset="utf-8">#}
-{#    <meta name="viewport" content="width=device-width, initial-scale=1.0">#}
-{#    <title>Queued</title>#}
-{#    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">#}
-{#    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">#}
-{#</head>#}
-{##}
-{#  <body>#}
-{##}
-{#    <div style="padding-top: 20px;"></div>#}
-{##}
-{#    {% block home %}#}
-{#    {% endblock %}#}
-{##}
-{#    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>#}
-{#    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>#}
-{#    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>#}
-{##}
-{#    {% block extra_js %}#}
-{#    {% endblock %}#}
-{#  </body>#}
-{#</html>#}
 {% load static from staticfiles %}
 <!DOCTYPE html>
-<html lang="en">
+<!--[if IE 9]><html class="ie ie9"> <![endif]-->
+<html>
 <head>
-  <meta charset="utf-8">
-  <title>Queued</title>
-  <meta content="width=device-width, initial-scale=1.0" name="viewport">
-  <meta content="" name="keywords">
-  <meta content="" name="description">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="pizza, delivery food, fast food, sushi, take away, chinese, italian food">
+    <meta name="description" content="">
+{#    <meta name="author" content="Ansonika">#}
+    <title>Queued - Making Restaurants Qless</title>
 
-  <!-- Favicons -->
-  <link href="{% static 'assets/images/logo_new.png' %}" rel="icon">
-  <link href="{% static 'assets/images/logo_new.png' %}" rel="apple-touch-icon">
+    <!-- Favicons-->
+    <link rel="shortcut icon" href="{% static 'assets/images/logo_new.png' %}" type="image/x-icon">
+    <link rel="apple-touch-icon" type="image/x-icon" href="{% static 'assets/img_home/img/apple-touch-icon-57x57-precomposed.png' %}">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="72x72" href="{% static 'assets/img_home/img/apple-touch-icon-72x72-precomposed.png' %}">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="114x114" href="{% static 'assets/img_home/img/apple-touch-icon-114x114-precomposed.png' %}">
+    <link rel="apple-touch-icon" type="image/x-icon" sizes="144x144" href="{% static 'assets/img_home/img/apple-touch-icon-144x144-precomposed.png' %}">
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,700,700i|Montserrat:300,400,500,700" rel="stylesheet">
+    <!-- GOOGLE WEB FONT -->
+    <link href='https://fonts.googleapis.com/css?family=Lato:400,700,900,400italic,700italic,300,300italic' rel='stylesheet' type='text/css'>
 
-  <!-- Bootstrap CSS File -->
-  <link href="{% static 'assets/lib/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+    <!-- BASE CSS -->
+    <link href="{% static 'assets/css_home/css/base.css' %}" rel="stylesheet">
 
-  <!-- Libraries CSS Files -->
-  <link href="{% static 'assets/lib/font-awesome/css/font-awesome.min.css' %}" rel="stylesheet">
-  <link href="{% static 'assets/lib/animate/animate.min.css' %}" rel="stylesheet">
-  <link href="{% static 'assets/lib/ionicons/css/ionicons.min.css' %}" rel="stylesheet">
-  <link href="{% static 'assets/lib/owlcarousel/assets/owl.carousel.min.css' %}" rel="stylesheet">
-  <link href="{% static 'assets/lib/lightbox/css/lightbox.min.css' %}" rel="stylesheet">
+    <!-- Modernizr -->
+	<script src="{% static 'assets/js_home/js/modernizr.js' %}"></script>
 
-  <!-- Main Stylesheet File -->
-  <link href="{% static 'assets/css_home/css/style.css' %}" rel="stylesheet">
-
-  <!-- =======================================================
-    Theme Name: BizPage
-    Theme URL: https://bootstrapmade.com/bizpage-bootstrap-business-template/
-    Author: BootstrapMade.com
-    License: https://bootstrapmade.com/license/
-  ======================================================= -->
+    <!--[if lt IE 9]>
+      <script src="{% static 'assets/js_home/js/html5shiv.min.js' %}"></script>
+      <script src="{% static 'assets/js_home/js/respond.min.js' %}"></script>
+    <![endif]-->
+<style>
+    .section-hide{display:none}
+</style>
 </head>
 
 <body>
-    {% block home %}
+
+    <!--[if lte IE 8]>
+        <p class="chromeframe">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a>.</p>
+    <![endif]-->
+
+    <div id="preloader">
+        <div class="sk-spinner sk-spinner-wave" id="status">
+            <div class="sk-rect1"></div>
+            <div class="sk-rect2"></div>
+            <div class="sk-rect3"></div>
+            <div class="sk-rect4"></div>
+            <div class="sk-rect5"></div>
+        </div>
+    </div><!-- End Preload -->
+
+    <!-- Header ================================================== -->
+    <header>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col--md-4 col-sm-4 col-xs-4">
+                <a href="{% url 'home' %}" id="logo">
+{#                <img src="{% static 'assets/images/logo_new.png' %}" width="190" height="23" alt="" data-retina="true" class="hidden-xs">#}
+                <img src="{% static 'assets/images/logo_new.png' %}" width="60" height="30" alt="" data-retina="true" class="hidden-xs">
+                <img src="{% static 'assets/images/logo_new.png' %}" width="59" height="23" alt="" data-retina="true" class="hidden-lg hidden-md hidden-sm">
+                </a>
+            </div>
+            <nav class="col--md-8 col-sm-8 col-xs-8">
+            <a class="cmn-toggle-switch cmn-toggle-switch__htx open_close" href="javascript:void(0);"><span>Menu mobile</span></a>
+            <div class="main-menu">
+                <div id="header_menu">
+                    <img src="{% static 'assets/images/logo_new.png' %}" width="190" height="23" alt="" data-retina="true">
+                </div>
+                <a href="#" class="open_close" id="close_in"><i class="icon_close"></i></a>
+                <ul>
+{#                    <li class="submenu">#}
+{#                    <a href="javascript:void(0);" class="show-submenu">Home<i class="icon-down-open-mini"></i></a>#}
+{#                    <ul>#}
+{#                        <li><a href="index.html">Home Video background</a></li>#}
+{#                        <li><a href="index_2.html">Home Static image</a></li>#}
+{#                        <li><a href="index_3.html">Home Text rotator</a></li>#}
+{#                        <li><a href="index_8.html">Home Layer slider</a></li>#}
+{#                        <li><a href="index_4.html">Home Cookie bar</a></li>#}
+{#                        <li><a href="index_5.html">Home Popup</a></li>#}
+{#                        <li><a href="index_6.html">Home Mobile synthetic</a></li>#}
+{#                        <li><a href="index_7.html">Top Menu version 2</a></li>#}
+{#                    </ul>#}
+{#                    </li>#}
+{#                    <li class="submenu">#}
+{#                    <a href="javascript:void(0);" class="show-submenu">Restaurants<i class="icon-down-open-mini"></i></a>#}
+{#                    <ul>#}
+{#                        <li><a href="list_page.html">Row listing</a></li>#}
+{#                        <li><a href="grid_list.html">Grid listing</a></li>#}
+{#                        <li><a href="map_listing.html">Map listing</a></li>#}
+{#                        <li><a href="detail_page.html">Restaurant Menu</a></li>#}
+{#                        <li><a href="submit_restaurant.html">Submit Restaurant</a></li>#}
+{#                        <li><a href="cart.html">Order step 1</a></li>#}
+{#                        <li><a href="cart_2.html">Order step 2</a></li>#}
+{#                        <li><a href="cart_3.html">Order step 3</a></li>#}
+{#                        <li><a href="cart_datepicker.html">Order Date/Time picker</a></li>#}
+{#                    </ul>#}
+{#                    </li>#}
+{#                    <li><a href="about.html">About us</a></li>#}
+{#                    <li><a href="faq.html">Faq</a></li>#}
+{#                    <li class="submenu">#}
+{#                    <a href="javascript:void(0);" class="show-submenu">Pages<i class="icon-down-open-mini"></i></a>#}
+{#                    <ul>#}
+{#                        <li><a href="RTL_version/index.html">RTL version</a></li>#}
+{#                        <li><a href="admin.html">Admin section</a></li>#}
+{#                        <li><a href="submit_driver.html">Submit Driver</a></li>#}
+{#                        <li><a href="#0" data-toggle="modal" data-target="#login_2">User Login</a></li>#}
+{#                        <li><a href="#0" data-toggle="modal" data-target="#register">User Register</a></li>#}
+{#                        <li><a href="detail_page_2.html">Restaurant detail page</a></li>#}
+{#                        <li><a href="blog.html">Blog</a></li>#}
+{#                        <li><a href="contacts.html">Contacts</a></li>#}
+{#                        <li><a href="coming_soon/index.html">Coming soon page</a></li>#}
+{#                        <li><a href="shortcodes.html">Shortcodes</a></li>#}
+{#                        <li><a href="icon_pack_1.html">Icon pack 1</a></li>#}
+{#                        <li><a href="icon_pack_2.html">Icon pack 2</a></li>#}
+{#                    </ul>#}
+{#                    </li>#}
+                    {% if not user.is_authenticated %}
+                        <li><a href="#0" data-toggle="modal" data-target="#login_2">Login</a></li>
+                        <li><a href="#0" data-toggle="modal" data-target="#register">Register</a></li>
+                    {% else %}
+                        <li><a href="#0" data-toggle="modal" data-target="#cart">Cart<i class="icon-basket"></i></a></li>
+                        <li class="submenu">
+                        <a href="javascript:void(0);" class="show-submenu">Profile<i class="icon-down-open-mini"></i></a>
+                        <ul>
+                            <li><a href="RTL_version/index.html">Edit Profile</a></li>
+                            <li><a href="{% url 'logout-user' %}">Logout<i class="icon-logout"></i></a></li>
+                        </ul>
+                        </li>
+
+                    {% endif %}
+                </ul>
+            </div><!-- End main-menu -->
+            </nav>
+        </div><!-- End row -->
+    </div><!-- End container -->
+    </header>
+
+
+    {% block content %}
     {% endblock %}
 
-<script src="{% static 'assets/lib/jquery/jquery.min.js' %}"></script>
-  <script src="{% static 'assets/lib/jquery/jquery-migrate.min.js' %}"></script>
-  <script src="{% static 'assets/lib/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-  <script src="{% static 'assets/lib/easing/easing.min.js' %}"></script>
-  <script src="{% static 'assets/lib/superfish/hoverIntent.js' %}"></script>
-  <script src="{% static 'assets/lib/superfish/superfish.min.js' %}"></script>
-  <script src="{% static 'assets/lib/wow/wow.min.js' %}"></script>
-  <script src="{% static 'assets/lib/waypoints/waypoints.min.js' %}"></script>
-  <script src="{% static 'assets/lib/counterup/counterup.min.js' %}"></script>
-  <script src="{% static 'assets/lib/owlcarousel/owl.carousel.min.js' %}"></script>
-  <script src="{% static 'assets/lib/isotope/isotope.pkgd.min.js' %}"></script>
-  <script src="{% static 'assets/lib/lightbox/js/lightbox.min.js' %}"></script>
-  <script src="{% static 'assets/lib/touchSwipe/jquery.touchSwipe.min.js' %}"></script>
-  <!-- Contact Form JavaScript File -->
-{#  <script src="contactform/contactform.js"></script>#}
+    <!-- Footer ================================================== -->
+    <footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-sm-3">
+                <h3>Secure payments with</h3>
+                <p>
+                    <img src="{% static 'assets/img_home/img/cards.png' %}" alt="" class="img-responsive">
+                </p>
+            </div>
+            <div class="col-md-3 col-sm-3">
+                <h3>About</h3>
+                <ul>
+                    <li><a href="about.html">About us</a></li>
+                    <li><a href="faq.html">Faq</a></li>
+                    <li><a href="contacts.html">Contacts</a></li>
+                    <li><a href="#0" data-toggle="modal" data-target="#login_2">Login</a></li>
+                    <li><a href="#0" data-toggle="modal" data-target="#register">Register</a></li>
+                    <li><a href="#0">Terms and conditions</a></li>
+                </ul>
+            </div>
+{#            <div class="col-md-3 col-sm-3" id="newsletter">#}
+{#                <h3>Newsletter</h3>#}
+{#                <p>#}
+{#                    Join our newsletter to keep be informed about offers and news.#}
+{#                </p>#}
+{#                <div id="message-newsletter_2">#}
+{#                </div>#}
+{#                <form method="post" action="assets/newsletter.php" name="newsletter_2" id="newsletter_2">#}
+{#                    <div class="form-group">#}
+{#                        <input name="email_newsletter_2" id="email_newsletter_2" type="email" value="" placeholder="Your mail" class="form-control">#}
+{#                    </div>#}
+{#                    <input type="submit" value="Subscribe" class="btn_1" id="submit-newsletter_2">#}
+{#                </form>#}
+{#            </div>#}
+{#            <div class="col-md-2 col-sm-3">#}
+{#                <h3>Settings</h3>#}
+{#                <div class="styled-select">#}
+{#                    <select class="form-control" name="lang" id="lang">#}
+{#                        <option value="English" selected>English</option>#}
+{#                        <option value="French">French</option>#}
+{#                        <option value="Spanish">Spanish</option>#}
+{#                        <option value="Russian">Russian</option>#}
+{#                    </select>#}
+{#                </div>#}
+{#                <div class="styled-select">#}
+{#                    <select class="form-control" name="currency" id="currency">#}
+{#                        <option value="USD" selected>USD</option>#}
+{#                        <option value="EUR">EUR</option>#}
+{#                        <option value="GBP">GBP</option>#}
+{#                        <option value="RUB">RUB</option>#}
+{#                    </select>#}
+{#                </div>#}
+{#            </div>#}
+        </div><!-- End row -->
+        <div class="row">
+            <div class="col-md-12">
+                <div id="social_footer">
+                    <ul>
+                        <li><a href="#0"><i class="icon-facebook"></i></a></li>
+                        <li><a href="#0"><i class="icon-twitter"></i></a></li>
+                        <li><a href="#0"><i class="icon-google"></i></a></li>
+                        <li><a href="#0"><i class="icon-instagram"></i></a></li>
+                        <li><a href="#0"><i class="icon-pinterest"></i></a></li>
+                        <li><a href="#0"><i class="icon-vimeo"></i></a></li>
+                        <li><a href="#0"><i class="icon-youtube-play"></i></a></li>
+                    </ul>
+                    <p>
+                        © Queued 2018
+                    </p>
+                </div>
+            </div>
+        </div><!-- End row -->
+    </div><!-- End container -->
+    </footer>
+    <!-- End Footer =============================================== -->
 
-  <!-- Template Main Javascript File -->
-  <script src="{% static 'assets/js_home/main.js' %}"></script>
+
+    <!-- Login modal -->
+<div class="modal fade" id="login_2" tabindex="-1" role="dialog" aria-labelledby="myLogin" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content modal-popup">
+                <div id="id_login_section" class="modal-section">
+                    <a href="#" class="close-link"><i class="icon_close_alt2"></i></a>
+                    <form action="" data-url = "{% url 'login-user' %}" class="popup-form" method="POST" id="id_login_form" onsubmit="return login_user()">{% csrf_token %}
+                        <div class="alert-new alert-danger-new section-hide error-msgs" id="id_all_error_login">
+                        </div>
+                        <div class="login_icon"><i class="icon_lock_alt"></i></div>
+                        <input type="text" class="form-control form-white" placeholder="Email" name="email">
+                        <div class="alert-new alert-danger-new section-hide error-msgs" id="id_email_error_login">
+                        </div>
+                        <input type="password" class="form-control form-white" placeholder="Password" name="password">
+                        <div class="alert-new alert-danger-new section-hide error-msgs" id="id_password_error_login">
+                                    </div>
+                        <div class="text-left">
+                            <a href="#" onclick="javascript: toggle_forgot_password();">Forgot Password?</a>
+                        </div>
+                        <button type="submit" class="btn btn-submit">Submit</button>
+                    </form>
+                </div>
+                <div id="id_forgot_password" class="modal-section section-hide">
+                    <a href="#" class="close-link"><i class="icon_close_alt2"></i></a>
+                    <form action="" data-url = "{% url 'forgot-password' %}" class="popup-form" method="POST" id="id_forgot_password_form" onsubmit="return forgot_password_submit()">{% csrf_token %}
+                        <div class="alert-new alert-danger-new section-hide error-msgs" id="id_all_error_login">
+                        </div>
+                        <div class="login_icon"><i class="icon_lock_alt"></i></div>
+                        <input type="text" class="form-control form-white" placeholder="Email" name="email">
+                        <div class="alert-new alert-danger-new section-hide error-msgs" id="id_email_error_login">
+                        </div>
+                        <div class="text-left">
+                            <a href="#" onclick="javascript: toggle_login();">Back</a>
+                        </div>
+                        <button type="submit" class="btn btn-submit">Submit</button>
+                    </form>
+                </div>
+                <div class="modal-section section-hide" id="id_forgot_password_success">
+                    <div class="center-text">
+                        <h3 class="modal-margin-bottom">Reset Password</h3>
+                        <small>Please check your mailbox for the reset password link.</small>
+                    </div>
+                </div>
+			</div>
+		</div>
+	</div><!-- End modal -->
+
+<!-- Register modal -->
+<div class="modal fade" id="register" tabindex="-1" role="dialog" aria-labelledby="myRegister" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content modal-popup">
+				<a href="" class="close-link"><i class="icon_close_alt2"></i></a>
+				<form action="#" data-url="{% url 'signup-user' %}" class="popup-form" method="POST" id="id_signup_form" onsubmit="return signup_user()">{% csrf_token %}
+                    <div class="alert-new alert-danger-new section-hide error-msgs" id="id_all_error_signup"></div>
+                    <div class="login_icon"><i class="icon_lock_alt"></i></div>
+					<input type="text" class="form-control form-white" placeholder="Name" name="first_name">
+                    <div class="alert-new alert-danger-new section-hide error-msgs" id="id_first_name_error_signup">
+                    </div>
+					<input type="text" class="form-control form-white" placeholder="Last Name" name="last_name">
+                    <div class="alert-new alert-danger-new section-hide error-msgs" id="id_last_name_error_signup">
+                    </div>
+                    <input type="email" class="form-control form-white" placeholder="Email" name="email">
+                    <div class="alert-new alert-danger-new section-hide error-msgs" id="id_email_error_signup">
+                    </div>
+                    <input type="number" class="form-control form-white" placeholder="Phone Number" name="contact">
+                    <div class="alert-new alert-danger-new section-hide error-msgs" id="id_contact_error_signup">
+                    </div>
+                    <input type="password" class="form-control form-white" placeholder="Password"  id="password1" name="password">
+                    <div class="alert-new alert-danger-new section-hide error-msgs" id="id_password_error_signup">
+                    </div>
+                    <input type="password" class="form-control form-white" placeholder="Confirm password"  id="password2" name="confirm_password">
+                    <div class="alert-new alert-danger-new section-hide error-msgs" id="id_confirm_password_error_signup">
+                    </div>
+                    <div id="pass-info" class="clearfix"></div>
+					<div class="checkbox-holder text-left">
+						<div class="checkbox">
+							<input type="checkbox" value="accept_2" id="check_2" name="check_2" />
+							<label for="check_2"><span>I Agree to the <strong>Terms &amp; Conditions</strong></span></label>
+						</div>
+					</div>
+					<button type="submit" class="btn btn-submit">Register</button>
+				</form>
+			</div>
+		</div>
+</div><!-- End Register modal -->
+
+<div class="modal fade" id="cart" tabindex="-1" role="dialog" aria-labelledby="cart" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content modal-popup">
+				<a href="" class="close-link"><i class="icon_close_alt2"></i></a>
+                    <div>
+					<h3 class="pull-left">Your order</h3>
+					<table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <td>S.No</td>
+                            <td>Name</td>
+                            <td>Price</td>
+                            <td>Qty</td>
+                            <td>Total</td>
+                        </tr>
+                    </thead>
+					<tbody>
+{#					<tr>#}
+{#						<td>#}
+{#							<a href="#0" class="remove_item"><i class="icon_minus_alt"></i></a> <strong>1x</strong> Enchiladas#}
+{#						</td>#}
+{#						<td>#}
+{#							<strong class="pull-right">$11</strong>#}
+{#						</td>#}
+{#					</tr>#}
+{#					<tr>#}
+{#						<td>#}
+{#							<a href="#0" class="remove_item"><i class="icon_minus_alt"></i></a> <strong>2x</strong> Burrito#}
+{#						</td>#}
+{#						<td>#}
+{#							<strong class="pull-right">$14</strong>#}
+{#						</td>#}
+{#					</tr>#}
+{#					<tr>#}
+{#						<td>#}
+{#							<a href="#0" class="remove_item"><i class="icon_minus_alt"></i></a> <strong>1x</strong> Chicken#}
+{#						</td>#}
+{#						<td>#}
+{#							<strong class="pull-right">$20</strong>#}
+{#						</td>#}
+{#					</tr>#}
+{#					<tr>#}
+{#						<td>#}
+{#							<a href="#0" class="remove_item"><i class="icon_minus_alt"></i></a> <strong>2x</strong> Corona Beer#}
+{#						</td>#}
+{#						<td>#}
+{#							<strong class="pull-right">$9</strong>#}
+{#						</td>#}
+{#					</tr>#}
+{#					<tr>#}
+{#						<td>#}
+{#							<a href="#0" class="remove_item"><i class="icon_minus_alt"></i></a> <strong>2x</strong> Cheese Cake#}
+{#						</td>#}
+{#						<td>#}
+{#							<strong class="pull-right">$12</strong>#}
+{#						</td>#}
+{#					</tr>#}
+                    <tr>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td>1</td>
+                    </tr>
+					</tbody>
+					</table>
+					<hr>
+					<table class="table table_summary">
+					<tbody>
+					<tr>
+						<td>
+							 Subtotal <span class="pull-right">$56</span>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							 Delivery fee <span class="pull-right">$10</span>
+						</td>
+					</tr>
+					<tr>
+						<td class="total">
+							 TOTAL <span class="pull-right">$66</span>
+						</td>
+					</tr>
+					</tbody>
+					</table>
+					<hr>
+					<a class="btn_full" href="cart.html">Order now</a>
+				<!-- End cart_box -->
+                <!-- End theiaStickySidebar -->
+            </div>
+			</div>
+		</div>
+</div>
+
+
+    <!-- COMMON SCRIPTS -->
+    <script src="{% static 'assets/js_home/js/jquery-2.2.4.min.js' %}"></script>
+    <script src="{% static 'assets/js_home/js/common_scripts_min.js' %}"></script>
+    <script src="{% static 'assets/js_home/js/functions.js' %}"></script>
+    <script src="{% static 'assets/js_home/validate.js' %}"></script>
+
+    <!-- SPECIFIC SCRIPTS -->
+    <script src="{% static 'assets/js_home/js/video_header.js' %}"></script>
+    <script>
+    $(document).ready(function() {
+        'use strict';
+          HeaderVideo.init({
+          container: $('.header-video'),
+          header: $('.header-video--media'),
+          videoTrigger: $("#video-trigger"),
+          autoPlayVideo: true
+        });
+
+    });
+
+    function login_user(){
+    $('.error-msgs').hide();
+    $.ajax({
+        url: $('#id_login_form').attr('data-url'),
+        type: $('#id_login_form').attr('method'),
+        data: $('#id_login_form').serialize(),
+        success: function(response){
+            if(response.status){
+                    location.reload();
+            }else{
+                // $('#id_login_form').html(response.data);
+                for(var i=0; i<response.errors.length; i++){
+                    if (response.errors[i].key == '__all__'){
+                        $('#id_all_error_login').text(response.errors[i].error);
+                        $('#id_all_error_login').show();
+                    }else{
+                        $('#id_'+response.errors[i].key+'_error_login').text(response.errors[i].error);
+                        $('#id_'+response.errors[i].key+'_error_login').show();
+                        $('#id_'+response.errors[i].key+'_error_parent_div_login').addClass('has-error');
+                    }
+                }
+            }
+        }
+    });
+    return false;
+}
+
+function signup_user(){
+    $('.error-msgs').hide();
+    $.ajax({
+        url: $('#id_signup_form').attr('data-url'),
+        type: $('#id_signup_form').attr('method'),
+        data: $('#id_signup_form').serialize(),
+        success: function(response){
+            if(response.status){
+                alert('An email has been sent to your account activation. Please click on that link to proceed');
+                location.reload();
+            }else{
+
+                // $('#id_signup_form').html(response.data);
+
+                for(var i=0; i<response.errors.length; i++){
+                    if (response.errors[i].key == '__all__'){
+                        $('#id_all_error_signup').text(response.errors[i].error);
+                        $('#id_all_error_signup').show();
+                    }else{
+                        $('#id_'+response.errors[i].key+'_error_signup').text(response.errors[i].error);
+                        $('#id_'+response.errors[i].key+'_error_signup').show();
+                        $('#id_'+response.errors[i].key+'_error_parent_div_signup').addClass('has-error');
+                    }
+                }
+            }
+        }
+    });
+    return false;
+}
+
+function forgot_password_submit(){
+    $('.error-msgs').hide();
+    $.ajax({
+        url: $('#id_forgot_password_form').attr('data-url'),
+        type: $('#id_forgot_password_form').attr('method'),
+        data: $('#id_forgot_password_form').serialize(),
+        success: function(response){
+            if(response.status){
+                $('.modal-section ').hide();
+                $('#id_forgot_password_success').show();
+            }else{
+                for(var i=0; i<response.errors.length; i++){
+                    if (response.errors[i].key == '__all__'){
+                        $('#id_all_error_forgot_password').text(response.errors[i].error);
+                        $('#id_all_error_forgot_password').show();
+                    }else{
+                        $('#id_'+response.errors[i].key+'_error_forgot_password').text(response.errors[i].error);
+                        $('#id_'+response.errors[i].key+'_error_forgot_password').show();
+                        $('#id_'+response.errors[i].key+'_error_parent_div_forgot_password').addClass('has-error');
+                    }
+                }
+            }
+        }
+    });
+    return false;
+}
+
+function toggle_forgot_password() {
+    $('.error-msgs').hide();
+    $('.modal-section ').hide();
+    $('#id_login_form')[0].reset();
+    $('#id_signup_form')[0].reset();
+    $('#id_forgot_password_form')[0].reset();
+    $('#id_forgot_password').show();
+}
+
+function toggle_login(){
+    $('.error-msgs').hide();
+    $('.modal-section ').hide();
+    $('#id_login_form')[0].reset();
+    $('#id_signup_form')[0].reset();
+    $('#id_forgot_password_form')[0].reset();
+    $('#id_login_section').show();
+}
+
+
+</script>
 
     {% block extra_js %}
     {% endblock %}
 
-</body>
+    </body>
 </html>

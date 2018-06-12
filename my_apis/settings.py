@@ -208,3 +208,12 @@ RAZORPAY_KEY_ID = "rzp_test_S7gxsV55dTOz1E"
 RAZORPAY_KEY_KEY = "PsQyqccC4iZFH5wcewxIEu35"
 
 GOOGLE_MAPS_GEOLOCATION_KEY = "AIzaSyB8L5XklsbEJ-_R5v-YJe7Znl08m-4n2Zw"
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'confirmation@aashyanalakhanpal.com'
+EMAIL_HOST_PASSWORD = 'x#N+$aT7Pwi8'
+DEFAULT_FROM_EMAIL = 'confirmation@aashyanalakhanpal.com'
+DEFAULT_TO_EMAIL = 'confirmation@aashyanalakhanpal.com'
+DEFAULT_FROM_EMAIL_NAME = 'QUEUED'

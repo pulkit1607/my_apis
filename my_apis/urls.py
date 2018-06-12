@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include('apis.urls')),
     url(r'^api-docs/', schema_view),
+    url(r'^$', HomeView.as_view(), name='home'),
     # url(r'^hotel/(?P<pk>[0-9]+)/dashboard/$', DashBoardView.as_view(), name='dashboard-view'),
     url(r'^hotel/dashboard/$', DashBoardView.as_view(), name='dashboard-view'),
     url(r'^vendor/login/$', VendorLoginView.as_view(), name='vendor-login-view'),
@@ -41,6 +42,16 @@ urlpatterns = [
     url(r'^vendor/menu/upload/$', VendorMenuUploadView.as_view(), name='vendor-menu-upload'),
     url(r'^vendor/orders/list/$', VendorOrderListView.as_view(), name='vendor-orders-list'),
     url(r'^verify-payment/$',VerifyPaymentView.as_view(), name='verify_payment'),
+    url(r'^list-restaurants/$', RestaurantListView.as_view(), name='list-all-restaurant'),
+    url(r'^restaurant/(?P<pk>[0-9]+)/menu/$', RestaurantMenuView.as_view(), name='restaurant-menu-view'),
+    url(r'^account/login/$', LoginView.as_view(), name="login-user"),
+    url(r'^account/logout/$', LogoutView.as_view(), name='logout-user'),
+    url(r'^account/signup/$', SignupView.as_view(), name="signup-user"),
+    url(r'^account/activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        EmailAccountActivate.as_view(), name='activate'),
+    url(r'^account/forgot-password/$', ForgotPasswrod.as_view(), name="forgot-password"),
+    url(r'^account/reset-password/(?P<token>\w+)/$', ResetPasswordView.as_view(), name='reset-password'),
+    url(r'^user/cart/details/$', UserCartView.as_view(), name='user-cart'),
 
 ]
 if settings.DEBUG:

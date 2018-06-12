@@ -7,6 +7,13 @@ from django.views.generic import TemplateView
 from rest_framework import generics, schemas
 from datetime import date, timedelta
 
+from braces.views import AjaxResponseMixin, JSONResponseMixin
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_text
+from django.contrib.auth.tokens import default_token_generator
+from django.http import HttpResponse
+from django.contrib import messages
+
 from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
@@ -31,7 +38,7 @@ from .serializers import (CategorySerializer, HotelResultsSerializer, MenuSerial
                           HotelOrderSerializer)
 from  my_apis.utils import create_username, SendEmail
 from my_apis.mixins import ControlMixin
-from apis.forms import AddLocationForm, AddMenuForm, ContactUsForm
+from apis.forms import AddLocationForm, AddMenuForm, ContactUsForm, LoginForm, SignupForm, ForgotPasswordForm, ResetPasswordForm
 from my_apis.settings import GOOGLE_MAPS_GEOLOCATION_KEY
 import json
 import requests
@@ -1047,7 +1054,7 @@ class VerifyPaymentView(TemplateView):
 
 
 class HomeView(TemplateView):
-    template_name = "Home.html"
+    template_name = "website/index.html"
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
@@ -1066,3 +1073,282 @@ class HomeView(TemplateView):
         else:
             context['form'] = form
             return render(request, self.template_name, context)
+
+class RestaurantListView(TemplateView):
+    template_name = 'website/list_page.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(RestaurantListView, self).get_context_data(**kwargs)
+        hotel = HotelBranch.objects.all()
+        hotel_count = HotelBranch.objects.all().count()
+        category = Category.objects.all()
+        category_count = Category.objects.all().count()
+        cat_count = dict()
+        menu = Menu.objects.all()
+
+        for each in category:
+            dict_num = {each.category: 0}
+            cat_count.update(dict_num)
+
+        for each in menu:
+            for key, value in cat_count.iteritems():
+                if each.category.category == key:
+                    cat_count[key] = value + 1
+
+        context['hotel'] = hotel
+        context['hotel_count'] = hotel_count
+        context['category'] = category
+        context['category_count'] = category_count
+        context['cat_count'] = cat_count
+
+        return context
+
+class RestaurantMenuView(TemplateView):
+    template_name = 'website/detail_page.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(RestaurantMenuView, self).get_context_data(**kwargs)
+        menu = Menu.objects.filter(hotel_branch=kwargs['pk'])
+        cat_new = list()
+        for each in menu:
+            cat_new.append(each.category.category)
+        hotel = HotelBranch.objects.get(id=kwargs['pk'])
+        category = Category.objects.all()
+        cat_count = dict()
+
+        for each in category:
+            dict_num = {each.category: 0}
+            cat_count.update(dict_num)
+
+        for each in menu:
+            for key, value in cat_count.iteritems():
+                if each.category.category == key:
+                    cat_count[key] = value + 1
+
+        print menu
+
+        context['menu'] = menu
+        context['hotel'] = hotel
+        context['cat_count'] = cat_count
+        context['category'] = category
+        context['cat_new'] = cat_new
+
+        return context
+
+class LoginView(AjaxResponseMixin, JSONResponseMixin, View):
+
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Check to see if the user in the request has the required
+        permission.
+        """
+        if request.method == "GET":
+            return redirect("/")
+
+        return super(LoginView, self).dispatch(request, *args, **kwargs)
+
+    def post_ajax(self, request, *args, **kwargs):
+        """
+            Login the user after successful authentication
+        """
+        response = {'status': False, 'errors': []}
+
+        form = LoginForm(request.POST, request=request)
+        if form.is_valid():
+
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            user = User.objects.get(email__iexact=email)
+            username = user.username
+
+            user = authenticate(username=username, password=password)
+
+            if user is not None:
+                logout(request)
+                login(request, user)
+                response['status'] = True
+            else:
+                # TODO Need to send email verification link again.
+                response['errors'].append({"key": "__all__", "error": "* You did not verify your account yet. Please check your email and verify your account."})
+
+        else:
+            for key, value in form.errors.iteritems():
+                tmp = {'key': key, 'error': value.as_text()}
+                response['errors'].append(tmp)
+
+        return self.render_json_response(response)
+
+class LogoutView(View):
+
+    def get(self, request, *args, **kwargs):
+        print "here"
+        logout(request)
+        return redirect("/")
+
+class SignupView(AjaxResponseMixin, JSONResponseMixin, View):
+
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Check to see if the user in the request has the required
+        permission.
+        """
+        if request.method == "GET":
+            return redirect("/")
+
+        return super(SignupView, self).dispatch(request, *args, **kwargs)
+
+    def post_ajax(self, request, *args, **kwargs):
+        """
+            Signup the user first and then sigin the user.
+        """
+        response = {'status': False, 'errors': []}
+
+        form = SignupForm(request.POST, request=request)
+
+        if form.is_valid():
+            profile = form.save()
+            email = form.cleaned_data['email']
+            user = User.objects.get(email__iexact=email)
+            user.is_active = False
+            user.save()
+
+            current_site = get_current_site(request)
+
+            email_sender = SendEmail(request)
+            email_sender.send([user.email], "email_messages/account_active_email.html",
+                                                        {'user': user, 'domain': current_site.domain,
+                                                         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                                                         'token': default_token_generator.make_token(user),
+                                                         },
+                                                        "Activate your Queued account", [])
+            response['status'] = True
+            return self.render_json_response(response)
+        else:
+
+            # Django simple captcha view
+
+            # data = render_to_string("account/signup_modal.html", {'signup_form': form}, request=request)
+            # response['data'] = data
+
+            for key, value in form.errors.iteritems():
+                tmp = {'key': key, 'error': value.as_text()}
+                response['errors'].append(tmp)
+
+        return self.render_json_response(response)
+
+class EmailAccountActivate(View):
+
+   def get(self, request, **kwargs):
+       try:
+           uid = force_text(urlsafe_base64_decode(kwargs['uidb64']))
+           user = User.objects.get(pk=uid)
+       except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+           user = None
+
+       if user is not None and default_token_generator.check_token(user, kwargs['token']):
+           user.is_active = True
+           user.save()
+           login(request, user)
+           return redirect("/")
+       else:
+           return HttpResponse('Activation link is invalid!')
+
+class ForgotPasswrod(AjaxResponseMixin, JSONResponseMixin, View):
+
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Check to see if the user in the request has the required
+        permission.
+        """
+        if request.method == "GET":
+            return redirect("/")
+
+        return super(ForgotPasswrod, self).dispatch(request, *args, **kwargs)
+
+    def post_ajax(self, request, *args, **kwargs):
+        """
+        User enter the email for the forgot password. A link will be sent to the verfied email of the user for reset password
+        """
+        response = {'status': False, 'errors': []}
+
+        form = ForgotPasswordForm(request.POST)
+
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            user = User.objects.get(email__iexact=email)
+
+            PasswordReset.objects.filter(user=user).delete()
+            password_reset = PasswordReset(user=user)
+            password_reset.save()
+
+            current_site = get_current_site(request)
+
+            email_sender = SendEmail(request)
+            email_sender.send([user.email], "email_messages/reset-password.html",
+                              {'user': user, 'domain': current_site.domain,
+                               'token': password_reset.token,
+                               },
+                              "Reset your password", [])
+
+            response['status'] = True
+        else:
+            for key, value in form.errors.iteritems():
+                tmp = {'key': key, 'error': value.as_text()}
+                response['errors'].append(tmp)
+
+        return self.render_json_response(response)
+
+
+class ResetPasswordView(View):
+    template_name = "website/reset_password.html"
+
+    def get(self, request, **kwargs):
+
+        try:
+            password_reset = PasswordReset.objects.get(token=kwargs['token'])
+        except:
+            messages.error(self.request, 'That password reset token is no longer valid, please try again.')
+            return redirect("/")
+
+        if password_reset.completed:
+            messages.error(self.request, 'You have used this token.')
+            return redirect("/")
+
+        form = ResetPasswordForm(None)
+        context = {'form': form, 'password_reset': password_reset}
+        return render(request, self.template_name, context)
+
+    def post(self, request, **kwargs):
+        try:
+            password_reset = PasswordReset.objects.get(token=kwargs['token'])
+        except PasswordReset.DoesNotExist:
+            messages.error(self.request, 'That password reset token is no longer valid, please try again.')
+            return redirect("/")
+
+        if password_reset.completed:
+            messages.error(self.request, 'You have used this token.')
+            return redirect("/")
+
+        form = ResetPasswordForm(self.request.POST)
+
+        if form.is_valid():
+            password_reset.user.set_password(form.cleaned_data['password'])
+            password_reset.user.save()
+            password_reset.completed = True
+            password_reset.save()
+            messages.success(request, 'Password successfully reset. Please login with your new credentials.')
+            return redirect("/")
+        else:
+            context = {'form': form, 'password_reset': password_reset}
+            return render(request, self.template_name, context)
+
+class UserCartView(TemplateView):
+    template_name = "website/user_cart.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(UserCartView, self).get_context_data(**kwargs)
+        cart = Cart.objects.get_or_create(customer=self.request.user)
+        cart_details = CartDetails.objects.filter(cart=cart)
+        context['cart'] = cart
+        context['cart_details'] = cart_details
+        return context
