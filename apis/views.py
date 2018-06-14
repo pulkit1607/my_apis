@@ -1109,29 +1109,19 @@ class RestaurantMenuView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(RestaurantMenuView, self).get_context_data(**kwargs)
         menu = Menu.objects.filter(hotel_branch=kwargs['pk'])
-        cat_new = list()
-        for each in menu:
-            cat_new.append(each.category.category)
+        categories = Category.objects.filter(
+            id__in=Menu.objects.filter(hotel_branch=kwargs['pk']).values_list("category", flat=True).distinct()
+        )
         hotel = HotelBranch.objects.get(id=kwargs['pk'])
         category = Category.objects.all()
         cat_count = dict()
-
-        for each in category:
-            dict_num = {each.category: 0}
-            cat_count.update(dict_num)
-
-        for each in menu:
-            for key, value in cat_count.iteritems():
-                if each.category.category == key:
-                    cat_count[key] = value + 1
-
-        print menu
 
         context['menu'] = menu
         context['hotel'] = hotel
         context['cat_count'] = cat_count
         context['category'] = category
-        context['cat_new'] = cat_new
+        context['categories'] = categories
+        context['pk']=kwargs['pk']
 
         return context
 
@@ -1342,6 +1332,7 @@ class ResetPasswordView(View):
             context = {'form': form, 'password_reset': password_reset}
             return render(request, self.template_name, context)
 
+
 class UserCartView(TemplateView):
     template_name = "website/user_cart.html"
 
@@ -1352,3 +1343,50 @@ class UserCartView(TemplateView):
         context['cart'] = cart
         context['cart_details'] = cart_details
         return context
+
+
+class AddCartView(AjaxResponseMixin, JSONResponseMixin, View):
+    def get_ajax(self, request, *args, **kwargs):
+        response = {'status': False, 'data': ''}
+        item = request.GET.get('item')
+        menu = Menu.objects.get(id=item)
+        cart = Cart.objects.get(customer=request.user)
+
+        if CartDetails.objects.filter(product=menu).exists():
+            print "ok"
+        # cd = CartDetails.objects.filter(cart=cart).values_list("product", flat=True)
+        # categories = Category.objects.filter(
+        #     id__in=Menu.objects.filter(hotel_branch=kwargs['pk']).values_list("category", flat=True).distinct()
+        # )
+        cart_details, created = CartDetails.objects.get_or_create(cart=cart, product=menu)
+
+
+        if created:
+            cart_details.product_name=menu.name
+            cart_details.price=menu.price
+            cart_details.qty=1
+            cart_details.save()
+        else:
+            cart_details.price=cart_details.price + menu.price
+            cart_details.qty = cart_details.qty + 1
+            cart_details.save()
+
+        response['status'] = True
+        return self.render_json_response(response)
+
+
+class DecrementCartView(AjaxResponseMixin, JSONResponseMixin, View):
+    def get_ajax(self, request, *args, **kwargs):
+        response = {'status': False, 'data': ''}
+        item = request.GET.get('item')
+        print "the item is", item
+        menu = Menu.objects.get(id=item)
+        cart = Cart.objects.get(customer=request.user)
+        cart_details, created = CartDetails.objects.get_or_create(cart=cart, product=menu)
+        cart_details.qty = cart_details.qty - 1
+        cart_details.price = cart_details.price - menu.price
+        cart_details.save()
+        response['status'] = True
+        return self.render_json_response(response)
+
+

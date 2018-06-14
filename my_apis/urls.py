@@ -52,6 +52,8 @@ urlpatterns = [
     url(r'^account/forgot-password/$', ForgotPasswrod.as_view(), name="forgot-password"),
     url(r'^account/reset-password/(?P<token>\w+)/$', ResetPasswordView.as_view(), name='reset-password'),
     url(r'^user/cart/details/$', UserCartView.as_view(), name='user-cart'),
+    url(r'^add/to/cart/$', AddCartView.as_view(), name='add-cart-view'),
+    url(r'^dec/to/cart/$', DecrementCartView.as_view(), name='dec-cart-view'),
 
 ]
 if settings.DEBUG:

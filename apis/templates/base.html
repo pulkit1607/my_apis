@@ -1,4 +1,5 @@
 {% load static from staticfiles %}
+{% load custom_tags %}
 <!DOCTYPE html>
 <!--[if IE 9]><html class="ie ie9"> <![endif]-->
 <html>
@@ -323,53 +324,15 @@
                         </tr>
                     </thead>
 					<tbody>
-{#					<tr>#}
-{#						<td>#}
-{#							<a href="#0" class="remove_item"><i class="icon_minus_alt"></i></a> <strong>1x</strong> Enchiladas#}
-{#						</td>#}
-{#						<td>#}
-{#							<strong class="pull-right">$11</strong>#}
-{#						</td>#}
-{#					</tr>#}
-{#					<tr>#}
-{#						<td>#}
-{#							<a href="#0" class="remove_item"><i class="icon_minus_alt"></i></a> <strong>2x</strong> Burrito#}
-{#						</td>#}
-{#						<td>#}
-{#							<strong class="pull-right">$14</strong>#}
-{#						</td>#}
-{#					</tr>#}
-{#					<tr>#}
-{#						<td>#}
-{#							<a href="#0" class="remove_item"><i class="icon_minus_alt"></i></a> <strong>1x</strong> Chicken#}
-{#						</td>#}
-{#						<td>#}
-{#							<strong class="pull-right">$20</strong>#}
-{#						</td>#}
-{#					</tr>#}
-{#					<tr>#}
-{#						<td>#}
-{#							<a href="#0" class="remove_item"><i class="icon_minus_alt"></i></a> <strong>2x</strong> Corona Beer#}
-{#						</td>#}
-{#						<td>#}
-{#							<strong class="pull-right">$9</strong>#}
-{#						</td>#}
-{#					</tr>#}
-{#					<tr>#}
-{#						<td>#}
-{#							<a href="#0" class="remove_item"><i class="icon_minus_alt"></i></a> <strong>2x</strong> Cheese Cake#}
-{#						</td>#}
-{#						<td>#}
-{#							<strong class="pull-right">$12</strong>#}
-{#						</td>#}
-{#					</tr>#}
+                    {% for item in user_cart_details %}
                     <tr>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>1</td>
+                        <td>{{ forloop.counter }}</td>
+                        <td>{{ item.product_name }}</td>
+                        <td>{% get_individual_price item.id %}</td>
+                        <td>{{ item.qty }}</td>
+                        <td>{{ item.price }}</td>
                     </tr>
+                    {% endfor %}
 					</tbody>
 					</table>
 					<hr>
@@ -406,10 +369,13 @@
     <script src="{% static 'assets/js_home/js/jquery-2.2.4.min.js' %}"></script>
     <script src="{% static 'assets/js_home/js/common_scripts_min.js' %}"></script>
     <script src="{% static 'assets/js_home/js/functions.js' %}"></script>
+    <script src="{% static 'assets/js_home/js/custom.js' %}"></script>
     <script src="{% static 'assets/js_home/validate.js' %}"></script>
+
 
     <!-- SPECIFIC SCRIPTS -->
     <script src="{% static 'assets/js_home/js/video_header.js' %}"></script>
+
     <script>
     $(document).ready(function() {
         'use strict';
@@ -422,108 +388,108 @@
 
     });
 
-    function login_user(){
-    $('.error-msgs').hide();
-    $.ajax({
-        url: $('#id_login_form').attr('data-url'),
-        type: $('#id_login_form').attr('method'),
-        data: $('#id_login_form').serialize(),
-        success: function(response){
-            if(response.status){
-                    location.reload();
-            }else{
-                // $('#id_login_form').html(response.data);
-                for(var i=0; i<response.errors.length; i++){
-                    if (response.errors[i].key == '__all__'){
-                        $('#id_all_error_login').text(response.errors[i].error);
-                        $('#id_all_error_login').show();
-                    }else{
-                        $('#id_'+response.errors[i].key+'_error_login').text(response.errors[i].error);
-                        $('#id_'+response.errors[i].key+'_error_login').show();
-                        $('#id_'+response.errors[i].key+'_error_parent_div_login').addClass('has-error');
-                    }
-                }
-            }
-        }
-    });
-    return false;
-}
-
-function signup_user(){
-    $('.error-msgs').hide();
-    $.ajax({
-        url: $('#id_signup_form').attr('data-url'),
-        type: $('#id_signup_form').attr('method'),
-        data: $('#id_signup_form').serialize(),
-        success: function(response){
-            if(response.status){
-                alert('An email has been sent to your account activation. Please click on that link to proceed');
-                location.reload();
-            }else{
-
-                // $('#id_signup_form').html(response.data);
-
-                for(var i=0; i<response.errors.length; i++){
-                    if (response.errors[i].key == '__all__'){
-                        $('#id_all_error_signup').text(response.errors[i].error);
-                        $('#id_all_error_signup').show();
-                    }else{
-                        $('#id_'+response.errors[i].key+'_error_signup').text(response.errors[i].error);
-                        $('#id_'+response.errors[i].key+'_error_signup').show();
-                        $('#id_'+response.errors[i].key+'_error_parent_div_signup').addClass('has-error');
-                    }
-                }
-            }
-        }
-    });
-    return false;
-}
-
-function forgot_password_submit(){
-    $('.error-msgs').hide();
-    $.ajax({
-        url: $('#id_forgot_password_form').attr('data-url'),
-        type: $('#id_forgot_password_form').attr('method'),
-        data: $('#id_forgot_password_form').serialize(),
-        success: function(response){
-            if(response.status){
-                $('.modal-section ').hide();
-                $('#id_forgot_password_success').show();
-            }else{
-                for(var i=0; i<response.errors.length; i++){
-                    if (response.errors[i].key == '__all__'){
-                        $('#id_all_error_forgot_password').text(response.errors[i].error);
-                        $('#id_all_error_forgot_password').show();
-                    }else{
-                        $('#id_'+response.errors[i].key+'_error_forgot_password').text(response.errors[i].error);
-                        $('#id_'+response.errors[i].key+'_error_forgot_password').show();
-                        $('#id_'+response.errors[i].key+'_error_parent_div_forgot_password').addClass('has-error');
-                    }
-                }
-            }
-        }
-    });
-    return false;
-}
-
-function toggle_forgot_password() {
-    $('.error-msgs').hide();
-    $('.modal-section ').hide();
-    $('#id_login_form')[0].reset();
-    $('#id_signup_form')[0].reset();
-    $('#id_forgot_password_form')[0].reset();
-    $('#id_forgot_password').show();
-}
-
-function toggle_login(){
-    $('.error-msgs').hide();
-    $('.modal-section ').hide();
-    $('#id_login_form')[0].reset();
-    $('#id_signup_form')[0].reset();
-    $('#id_forgot_password_form')[0].reset();
-    $('#id_login_section').show();
-}
-
+{#    function login_user(){#}
+{#    $('.error-msgs').hide();#}
+{#    $.ajax({#}
+{#        url: $('#id_login_form').attr('data-url'),#}
+{#        type: $('#id_login_form').attr('method'),#}
+{#        data: $('#id_login_form').serialize(),#}
+{#        success: function(response){#}
+{#            if(response.status){#}
+{#                    location.reload();#}
+{#            }else{#}
+{#                // $('#id_login_form').html(response.data);#}
+{#                for(var i=0; i<response.errors.length; i++){#}
+{#                    if (response.errors[i].key == '__all__'){#}
+{#                        $('#id_all_error_login').text(response.errors[i].error);#}
+{#                        $('#id_all_error_login').show();#}
+{#                    }else{#}
+{#                        $('#id_'+response.errors[i].key+'_error_login').text(response.errors[i].error);#}
+{#                        $('#id_'+response.errors[i].key+'_error_login').show();#}
+{#                        $('#id_'+response.errors[i].key+'_error_parent_div_login').addClass('has-error');#}
+{#                    }#}
+{#                }#}
+{#            }#}
+{#        }#}
+{#    });#}
+{#    return false;#}
+{#}#}
+{##}
+{#function signup_user(){#}
+{#    $('.error-msgs').hide();#}
+{#    $.ajax({#}
+{#        url: $('#id_signup_form').attr('data-url'),#}
+{#        type: $('#id_signup_form').attr('method'),#}
+{#        data: $('#id_signup_form').serialize(),#}
+{#        success: function(response){#}
+{#            if(response.status){#}
+{#                alert('An email has been sent to your account activation. Please click on that link to proceed');#}
+{#                location.reload();#}
+{#            }else{#}
+{##}
+{#                // $('#id_signup_form').html(response.data);#}
+{##}
+{#                for(var i=0; i<response.errors.length; i++){#}
+{#                    if (response.errors[i].key == '__all__'){#}
+{#                        $('#id_all_error_signup').text(response.errors[i].error);#}
+{#                        $('#id_all_error_signup').show();#}
+{#                    }else{#}
+{#                        $('#id_'+response.errors[i].key+'_error_signup').text(response.errors[i].error);#}
+{#                        $('#id_'+response.errors[i].key+'_error_signup').show();#}
+{#                        $('#id_'+response.errors[i].key+'_error_parent_div_signup').addClass('has-error');#}
+{#                    }#}
+{#                }#}
+{#            }#}
+{#        }#}
+{#    });#}
+{#    return false;#}
+{#}#}
+{##}
+{#function forgot_password_submit(){#}
+{#    $('.error-msgs').hide();#}
+{#    $.ajax({#}
+{#        url: $('#id_forgot_password_form').attr('data-url'),#}
+{#        type: $('#id_forgot_password_form').attr('method'),#}
+{#        data: $('#id_forgot_password_form').serialize(),#}
+{#        success: function(response){#}
+{#            if(response.status){#}
+{#                $('.modal-section ').hide();#}
+{#                $('#id_forgot_password_success').show();#}
+{#            }else{#}
+{#                for(var i=0; i<response.errors.length; i++){#}
+{#                    if (response.errors[i].key == '__all__'){#}
+{#                        $('#id_all_error_forgot_password').text(response.errors[i].error);#}
+{#                        $('#id_all_error_forgot_password').show();#}
+{#                    }else{#}
+{#                        $('#id_'+response.errors[i].key+'_error_forgot_password').text(response.errors[i].error);#}
+{#                        $('#id_'+response.errors[i].key+'_error_forgot_password').show();#}
+{#                        $('#id_'+response.errors[i].key+'_error_parent_div_forgot_password').addClass('has-error');#}
+{#                    }#}
+{#                }#}
+{#            }#}
+{#        }#}
+{#    });#}
+{#    return false;#}
+{#}#}
+{##}
+{#function toggle_forgot_password() {#}
+{#    $('.error-msgs').hide();#}
+{#    $('.modal-section ').hide();#}
+{#    $('#id_login_form')[0].reset();#}
+{#    $('#id_signup_form')[0].reset();#}
+{#    $('#id_forgot_password_form')[0].reset();#}
+{#    $('#id_forgot_password').show();#}
+{#}#}
+{##}
+{#function toggle_login(){#}
+{#    $('.error-msgs').hide();#}
+{#    $('.modal-section ').hide();#}
+{#    $('#id_login_form')[0].reset();#}
+{#    $('#id_signup_form')[0].reset();#}
+{#    $('#id_forgot_password_form')[0].reset();#}
+{#    $('#id_login_section').show();#}
+{#}#}
+{##}
 
 </script>
 
