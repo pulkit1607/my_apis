@@ -13,6 +13,8 @@ from django.utils.encoding import force_bytes, force_text
 from django.contrib.auth.tokens import default_token_generator
 from django.http import HttpResponse
 from django.contrib import messages
+# from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
+from django.db.models import Q
 
 from rest_framework.views import APIView
 from rest_framework.generics import GenericAPIView
@@ -38,7 +40,7 @@ from .serializers import (CategorySerializer, HotelResultsSerializer, MenuSerial
                           HotelOrderSerializer)
 from  my_apis.utils import create_username, SendEmail
 from my_apis.mixins import ControlMixin
-from apis.forms import AddLocationForm, AddMenuForm, ContactUsForm, LoginForm, SignupForm, ForgotPasswordForm, ResetPasswordForm
+from apis.forms import AddLocationForm, AddMenuForm, ContactUsForm, LoginForm, SignupForm, ForgotPasswordForm, ResetPasswordForm, OrderForm
 from my_apis.settings import GOOGLE_MAPS_GEOLOCATION_KEY
 import json
 import requests
@@ -522,7 +524,7 @@ class ForgetPasswordView(APIView):
             current_site = get_current_site(request)
 
             email_sender = SendEmail(request)
-            email_sender.send([user_request.email], "email_messages/reset-password.html",
+            email_sender.send([user_request.email], "email_messages/forget-password.html",
                               {'user': user_request, 'domain': current_site.domain,
                                'token': password_reset.token,
                                },
@@ -1048,7 +1050,7 @@ class VerifyPaymentView(TemplateView):
         url = 'https://api.razorpay.com/v1/payments/' + payment_key + '/capture'
         r = requests.post(url, data={'amount': payment_price},
                           auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_KEY))
-        print "the something is:", r.status_code, r.content
+        print "the something is:", r.status_code, self.request.GET.get('payment_key')
 
         return context
 
@@ -1079,27 +1081,40 @@ class RestaurantListView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(RestaurantListView, self).get_context_data(**kwargs)
-        hotel = HotelBranch.objects.all()
-        hotel_count = HotelBranch.objects.all().count()
-        category = Category.objects.all()
-        category_count = Category.objects.all().count()
-        cat_count = dict()
-        menu = Menu.objects.all()
+        keyword = self.request.GET.get('keyword')
 
-        for each in category:
-            dict_num = {each.category: 0}
-            cat_count.update(dict_num)
+        if keyword:
+            hotelbranch = HotelBranch.objects.filter(
+                id__in=Menu.objects.filter(
+                    Q(hotel_branch__branch_name__icontains=keyword) |
+                    Q(hotel_branch__hotel__name__icontains=keyword) |
+                    Q(hotel_branch__address__icontains=keyword) |
+                    Q(hotel_branch__city__icontains=keyword) |
+                    Q(hotel_branch__state__icontains=keyword) |
+                    Q(category__category__icontains=keyword) |
+                    Q(name__icontains=keyword)
+                ).values_list("hotel_branch__id", flat=True)
+            )
+            hotel_count = hotelbranch.count()
+        else:
+            hotelbranch = HotelBranch.objects.all()
+            hotel_count = hotelbranch.count()
+            # for each in category:
+            #     dict_num = {each.category: 0}
+            #     cat_count.update(dict_num)
+            #
+            # for each in menu:
+            #     for key, value in cat_count.iteritems():
+            #         if each.category.category == key:
+            #             cat_count[key] = value + 1
+            #
 
-        for each in menu:
-            for key, value in cat_count.iteritems():
-                if each.category.category == key:
-                    cat_count[key] = value + 1
-
-        context['hotel'] = hotel
+        context['hotelbranch'] = hotelbranch
         context['hotel_count'] = hotel_count
-        context['category'] = category
-        context['category_count'] = category_count
-        context['cat_count'] = cat_count
+
+        # context['category'] = category
+        # context['category_count'] = category_count
+        # context['cat_count'] = cat_count
 
         return context
 
@@ -1204,13 +1219,16 @@ class SignupView(AjaxResponseMixin, JSONResponseMixin, View):
 
             current_site = get_current_site(request)
 
-            email_sender = SendEmail(request)
-            email_sender.send([user.email], "email_messages/account_active_email.html",
-                                                        {'user': user, 'domain': current_site.domain,
-                                                         'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                                                         'token': default_token_generator.make_token(user),
-                                                         },
-                                                        "Activate your Queued account", [])
+            try:
+                email_sender = SendEmail(request)
+                email_sender.send([user.email], "email_messages/account_active_email.html",
+                                                            {'user': user, 'domain': current_site.domain,
+                                                             'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                                                             'token': default_token_generator.make_token(user),
+                                                             },
+                                                            "Activate your Queued account", [])
+            except:
+                pass
             response['status'] = True
             return self.render_json_response(response)
         else:
@@ -1274,7 +1292,7 @@ class ForgotPasswrod(AjaxResponseMixin, JSONResponseMixin, View):
             current_site = get_current_site(request)
 
             email_sender = SendEmail(request)
-            email_sender.send([user.email], "email_messages/reset-password.html",
+            email_sender.send([user.email], "email_messages/forget-password.html",
                               {'user': user, 'domain': current_site.domain,
                                'token': password_reset.token,
                                },
@@ -1347,31 +1365,50 @@ class UserCartView(TemplateView):
 
 class AddCartView(AjaxResponseMixin, JSONResponseMixin, View):
     def get_ajax(self, request, *args, **kwargs):
-        response = {'status': False, 'data': ''}
+        response = {'status': False, 'data': '', 'change': False}
         item = request.GET.get('item')
         menu = Menu.objects.get(id=item)
         cart = Cart.objects.get(customer=request.user)
+        cd = CartDetails.objects.filter(cart=cart)
+        list_re = list()
+        for each in cd:
+            list_re.append(each.product.hotel_branch.branch_name)
 
-        if CartDetails.objects.filter(product=menu).exists():
-            print "ok"
-        # cd = CartDetails.objects.filter(cart=cart).values_list("product", flat=True)
-        # categories = Category.objects.filter(
-        #     id__in=Menu.objects.filter(hotel_branch=kwargs['pk']).values_list("category", flat=True).distinct()
-        # )
-        cart_details, created = CartDetails.objects.get_or_create(cart=cart, product=menu)
+        if not list_re :
+            cart_details, created = CartDetails.objects.get_or_create(cart=cart, product=menu)
+
+            if created:
+                cart_details.product_name = menu.name
+                cart_details.price = menu.price
+                cart_details.qty = 1
+                cart_details.save()
+                response['status'] = True
+            else:
+                cart_details.price = cart_details.price + menu.price
+                cart_details.qty = cart_details.qty + 1
+                cart_details.save()
+                response['status'] = True
+
+        elif menu.hotel_branch.branch_name in list_re:
+            cart_details, created = CartDetails.objects.get_or_create(cart=cart, product=menu)
+
+            if created:
+                cart_details.product_name = menu.name
+                cart_details.price = menu.price
+                cart_details.qty = 1
+                cart_details.save()
+                response['status'] = True
+            else:
+                cart_details.price = cart_details.price + menu.price
+                cart_details.qty = cart_details.qty + 1
+                cart_details.save()
+                response['status'] = True
 
 
-        if created:
-            cart_details.product_name=menu.name
-            cart_details.price=menu.price
-            cart_details.qty=1
-            cart_details.save()
         else:
-            cart_details.price=cart_details.price + menu.price
-            cart_details.qty = cart_details.qty + 1
-            cart_details.save()
+            response['status'] = False
+            response['change'] = True
 
-        response['status'] = True
         return self.render_json_response(response)
 
 
@@ -1384,9 +1421,216 @@ class DecrementCartView(AjaxResponseMixin, JSONResponseMixin, View):
         cart = Cart.objects.get(customer=request.user)
         cart_details, created = CartDetails.objects.get_or_create(cart=cart, product=menu)
         cart_details.qty = cart_details.qty - 1
-        cart_details.price = cart_details.price - menu.price
-        cart_details.save()
+
+        if cart_details.qty == 0:
+            cart_details.delete()
+        else:
+            cart_details.price = cart_details.price - menu.price
+            cart_details.save()
+
         response['status'] = True
         return self.render_json_response(response)
 
 
+class ClearCartView(AjaxResponseMixin, JSONResponseMixin, View):
+    def get_ajax(self, request, *args, **kwargs):
+        response = {'status': False, 'data': ''}
+        cart = Cart.objects.get(customer=request.user)
+        CartDetails.objects.filter(cart=cart).delete()
+        response['status'] = True
+        return self.render_json_response(response)
+
+
+class OrderNowView(TemplateView):
+    template_name = 'website/cart.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(OrderNowView, self).get_context_data(**kwargs)
+        user = self.request.user
+        if not user:
+            return HttpResponseRedirect('/')
+        else:
+            profile = Profile.objects.get(user=user)
+            cart = Cart.objects.get(customer=user)
+            cart_details = CartDetails.objects.filter(cart=cart).first()
+            context['profile'] = profile
+            context['cd'] = cart_details
+            # context['form'] = OrderForm(self.request.POST or None)
+            return context
+
+class CreateOrderView(AjaxResponseMixin, JSONResponseMixin, View):
+
+    def post_ajax(self, request, *args, **kwargs):
+        response = {'status': False, 'errors': [], 'data':0}
+        form = OrderForm(request.POST)
+        cart = Cart.objects.get(customer=request.user)
+        cart_details = CartDetails.objects.filter(cart=cart).first()
+        amount = 0
+        cd = CartDetails.objects.filter(cart=cart)
+        for item in cd:
+            amount = amount + item.price
+
+        tax = int(amount * 0.05)
+        total_amount = amount + tax
+
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.customer=request.user.profile
+            order.hotel = cart_details.product.hotel
+            order.hotel_branch = cart_details.product.hotel_branch
+            order.total_amount=total_amount
+            order.date = form.cleaned_data['date']
+            order.time = form.cleaned_data['time']
+            order.special_notes = form.cleaned_data['special_notes']
+            order.number_of_persons = form.cleaned_data['number_of_persons']
+            order.order_status = 0
+            order.payment_status = 0
+            order.payment_type = 0
+            order.save()
+
+        for each in cd:
+            OrderDetails.objects.create(
+                order=order,
+                name=each.product_name,
+                qty=each.qty,
+                amount=each.price
+            )
+
+        response['status'] = True
+        response['data'] = order.order_id
+        # tmp = {'total_amount': int(order.total_amount * 100)}
+        # response['data'] = tmp
+        return self.render_json_response(response)
+
+
+class CreateOrderPayHotelView(AjaxResponseMixin, JSONResponseMixin, View):
+    def post_ajax(self, request, *args, **kwargs):
+        response = {'status': False, 'errors': [], 'data': 0}
+        form = OrderForm(request.POST)
+        cart = Cart.objects.get(customer=request.user)
+        cart_details = CartDetails.objects.filter(cart=cart).first()
+        amount = 0
+        liquor_tax = 0
+        food_tax = 0
+        amount_bsc = 0 ##Amount before Service Charge
+        service_charge = 0
+        total_amount = 0
+        cd = CartDetails.objects.filter(cart=cart)
+        for item in cd:
+            amount = amount + (item.qty * item.product.price)
+            if item.product.menu_type == 0:
+                liquor_tax_percent = int(item.product.price * 0.18)
+                tax_amount = int(item.qty * liquor_tax_percent)
+                liquor_tax = liquor_tax + tax_amount
+            else:
+                food_tax_percent = int(item.product.price * 0.05)
+                tax_amount = int(item.qty * food_tax_percent)
+                food_tax = food_tax + tax_amount
+
+
+        amount_bsc = amount_bsc + amount + liquor_tax + food_tax
+
+        if cart_details.product.hotel.service_charge:
+            service_charge_percent = (int(cart_details.product.hotel.service_charge_percent) / float(100))
+            service_charge = int(amount_bsc * service_charge_percent)
+
+        total_amount = amount_bsc + service_charge
+
+        if form.is_valid():
+            order = form.save(commit=False)
+            order.customer=request.user.profile
+            order.hotel = cart_details.product.hotel
+            order.hotel_branch = cart_details.product.hotel_branch
+            order.total_amount=amount
+            order.food_tax=food_tax
+            order.liquor_tax=liquor_tax
+            order.service_charge=service_charge
+            order.total_incl_amount=total_amount
+            order.date = form.cleaned_data['date']
+            order.time = form.cleaned_data['time']
+            order.special_notes = form.cleaned_data['special_notes']
+            order.number_of_persons = form.cleaned_data['number_of_persons']
+            order.order_status = 1
+            order.payment_status = 3
+            order.payment_type = 1
+            order.save()
+
+        else:
+            print "inside Form invalid"
+            print form.errors
+
+        for each in cd:
+            OrderDetails.objects.create(
+                order=order,
+                name=each.product.name,
+                qty=each.qty,
+                price=each.product.price,
+                amount=each.price,
+            )
+        CartDetails.objects.filter(cart=cart).delete()
+        response['status'] = True
+        response['data'] = order.order_id
+        response['redirect_url'] = '/order/confirmation/'+ order.order_id +'/'
+        # tmp = {'total_amount': int(order.total_amount * 100)}
+        # response['data'] = tmp
+        # return render(request, 'website/confirmation.html', response)
+        return self.render_json_response(response)
+
+class ProfileUpdateView(TemplateView):
+    template_name = 'website/profile-update.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(ProfileUpdateView, self).get_context_data(**kwargs)
+        user = self.request.user
+        profile = Profile.objects.filter(user=user).first()
+        context['profile'] = profile
+        return context
+
+    def post(self, request, *args, **kwargs):
+        first_name = self.request.POST.get('firstname')
+        last_name = self.request.POST.get('lastname')
+        phone = self.request.POST.get('tel')
+
+        user = request.user
+        profile = Profile.objects.get(user=user)
+
+        profile.user.first_name = first_name
+        profile.user.last_name = last_name
+        profile.user.save()
+        profile.contact = phone
+        profile.save()
+
+        return HttpResponseRedirect('/')
+
+class OrdersListView(TemplateView):
+    template_name = "website/user-order-list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(OrdersListView, self).get_context_data(**kwargs)
+        profile = Profile.objects.get(user=self.request.user)
+        orders = Order.objects.filter(customer=profile)
+        context['orders'] = orders
+        return context
+
+class OrderDetailView(TemplateView):
+    template_name = "website/user-order-detail.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(OrderDetailView, self).get_context_data(**kwargs)
+        profile = Profile.objects.get(user=self.request.user)
+        order = Order.objects.filter(id=kwargs['pk']).first()
+        order_details = OrderDetails.objects.filter(order=order)
+        context['order'] = order
+        context['order_details'] = order_details
+        return context
+
+class OrderConfirmationView(TemplateView):
+    template_name = 'website/confirmation.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(OrderConfirmationView, self).get_context_data(**kwargs)
+        order = Order.objects.get(order_id=kwargs['order_id'])
+        order_details = OrderDetails.objects.filter(order=order)
+        context['order']=order
+        context['order_details']=order_details
+        return context

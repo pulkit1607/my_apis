@@ -1,0 +1,436 @@
+{% extends 'base.html' %}
+{% load static from staticfiles %}
+{% load custom_tags %}
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- SubHeader =============================================== -->
+<section class="parallax-window" id="short" data-parallax="scroll" data-image-src="img/sub_header_cart.jpg" data-natural-width="1400" data-natural-height="350">
+    <div id="subheader">
+    	<div id="sub_content">
+    	 <h1>Place your order</h1>
+            <div class="bs-wizard">
+                <div class="col-xs-4 bs-wizard-step active">
+                  <div class="text-center bs-wizard-stepnum"><strong>1.</strong> Your details</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <a class="bs-wizard-dot"></a>
+                </div>
+                               
+                <div class="col-xs-4 bs-wizard-step disabled">
+                  <div class="text-center bs-wizard-stepnum"><strong>2.</strong> Payment</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <a href="cart_2.html" class="bs-wizard-dot"></a>
+                </div>
+            
+              <div class="col-xs-4 bs-wizard-step disabled">
+                  <div class="text-center bs-wizard-stepnum"><strong>3.</strong> Finish!</div>
+                  <div class="progress"><div class="progress-bar"></div></div>
+                  <a href="cart_3.html" class="bs-wizard-dot"></a>
+                </div>  
+		</div><!-- End bs-wizard --> 
+        </div><!-- End sub_content -->
+	</div><!-- End subheader -->
+</section><!-- End section -->
+<!-- End SubHeader ============================================ -->
+
+    <div id="position">
+        <div class="container">
+            <ul>
+                <li><a href="#0">Home</a></li>
+                <li><a href="#0">Category</a></li>
+                <li>Page active</li>
+            </ul>
+            <a href="#0" class="search-overlay-menu-btn"><i class="icon-search-6"></i> Search</a>
+        </div>
+    </div><!-- Position -->
+
+<!-- Content ================================================== -->
+<div class="container margin_60_35">
+		<div class="row">
+			<div class="col-md-3">
+            
+{#				<div class="box_style_2 hidden-xs info">#}
+{#					<h4 class="nomargin_top">Delivery time <i class="icon_clock_alt pull-right"></i></h4>#}
+{#					<p>#}
+{#						Lorem ipsum dolor sit amet, in pri partem essent. Qui debitis meliore ex, tollit debitis conclusionemque te eos.#}
+{#					</p>#}
+{#					<hr>#}
+{#					<h4>Secure payment <i class="icon_creditcard pull-right"></i></h4>#}
+{#					<p>#}
+{#						Lorem ipsum dolor sit amet, in pri partem essent. Qui debitis meliore ex, tollit debitis conclusionemque te eos.#}
+{#					</p>#}
+{#				</div><!-- End box_style_1 -->#}
+                
+				<div class="box_style_2 hidden-xs" id="help">
+					<i class="icon_lifesaver"></i>
+					<h4>Need <span>Help?</span></h4>
+					<a href="tel://004542344599" class="phone">+45 423 445 99</a>
+					<small>Monday to Friday 9.00am - 7.30pm</small>
+				</div>
+                
+			</div><!-- End col-md-3 -->
+            
+			<div class="col-md-6">
+				<div class="box_style_2" id="order_process">
+					<h2 class="inner">Your order details</h2>
+{#					<div class="form-group">#}
+{#						<label>First name</label>#}
+{#						<input type="text" class="form-control" id="firstname_order" name="firstname_order" placeholder="First name" value="{{ profile.user.first_name }}">#}
+{#					</div>#}
+{#					<div class="form-group">#}
+{#						<label>Last name</label>#}
+{#						<input type="text" class="form-control" id="lastname_order" name="lastname_order" placeholder="Last name" value="{{ profile.user.last_name }}">#}
+{#					</div>#}
+{#					<div class="form-group">#}
+{#						<label>Telephone/mobile</label>#}
+{#						<input type="text" id="tel_order" name="tel_order" class="form-control" placeholder="Telephone/mobile" value="{{ profile.contact }}">#}
+{#					</div>#}
+{#					<div class="form-group">#}
+{#						<label>Email</label>#}
+{#						<input type="email" id="email_booking_2" name="email_order" class="form-control" placeholder="Your email" value="{{ profile.user.email }}">#}
+{#					</div>#}
+                    <div class="row">
+                        	<div class="col-md-6 col-sm-6">
+                                <p><strong>Hotel Branch</strong>: {{ cd.product.hotel_branch.branch_name }}</p>
+						    </div>
+                            <div class="col-md-6 col-sm-6">
+                                <p><strong>Hotel Name</strong>: {{ cd.product.hotel.name }}</p>
+						    </div>
+                    </div>
+                    <div class="row">
+                        	<div class="col-md-6 col-sm-6">
+                                <p><strong>Address</strong>: {{ cd.product.hotel_branch.address }}, {{ cd.product.hotel_branch.city }}, {{ cd.product.hotel_branch.state }}</p>
+						    </div>
+                            <div class="col-md-6 col-sm-6">
+                                <p><strong>Contact Number</strong>: {{ cd.product.hotel_branch.contact_number }}</p>
+						    </div>
+                    </div>
+					<hr>
+                    <form data-url="{% url 'create-order' %}" method="post" id="id_form_create_order">{% csrf_token %}
+					<div class="row">
+						<div class="col-md-6 col-sm-6">
+							<div class="form-group">
+								<label>Order Date</label>
+{#								<select class="form-control" name="delivery_schedule_day" id="delivery_schedule_day">#}
+{#									<option value="" selected>Select day</option>#}
+{#									<option value="Today">Today</option>#}
+{#									<option value="Tomorrow">Tomorrow</option>#}
+{#								</select>#}
+                                 <div class="form-group">
+                                    <div class='input-group date' id='order_date'>
+                                        <input type='text' name="date" class="form-control" id="input_order_date" required />
+                                        <span class="input-group-addon">
+                                            <span class="icon-calendar"></span>
+                                        </span>
+                                        <small id="id_error_date" style="visibility: hidden;"></small>
+                                    </div>
+                                </div>
+							</div>
+						</div>
+						<div class="col-md-6 col-sm-6">
+							<div class="form-group">
+								<label>Order Time</label>
+								<select class="form-control" name="time" id="delivery_schedule_time" required>
+									<option value="" selected>Select time</option>
+									<option value="11.00am">11.00am</option>
+									<option value="11.15am">11.15am</option>
+									<option value="11.30am">11.30am</option>
+									<option value="11.45am">11.45am</option>
+									<option value="12.15am">12.15am</option>
+									<option value="12.30am">12.30am</option>
+									<option value="12.45am">12.45am</option>
+									<option value="01.00pm">01.00pm</option>
+									<option value="01.15pm">01.15pm</option>
+									<option value="01.30pm">01.30pm</option>
+									<option value="01.45pm">01.45pm</option>
+									<option value="02.00pm">02.00pm</option>
+									<option value="02.15pm">02.15pm</option>
+									<option value="02.30pm">02.30pm</option>
+									<option value="02.45pm">02.45pm</option>
+									<option value="03.00pm">03.00pm</option>
+									<option value="03.15pm">03.15pm</option>
+									<option value="03.30pm">03.30pm</option>
+									<option value="03.45pm">03.45pm</option>
+									<option value="04.00pm">04.00pm</option>
+									<option value="04.15pm">04.15pm</option>
+									<option value="04.45pm">04.45pm</option>
+									<option value="05.00pm">05.00pm</option>
+									<option value="05.15pm">05.15pm</option>
+									<option value="05.30pm">05.30pm</option>
+									<option value="05.45pm">05.45pm</option>
+									<option value="06.00pm">06.00pm</option>
+									<option value="06.15pm">06.15pm</option>
+									<option value="06.30pm">06.30pm</option>
+									<option value="06.45pm">06.45pm</option>
+									<option value="07.00pm">07.00pm</option>
+									<option value="07.15pm">07.15pm</option>
+									<option value="07.30pm">07.30pm</option>
+									<option value="07.45pm">07.45pm</option>
+									<option value="08.00pm">08.00pm</option>
+									<option value="08.15pm">08.15pm</option>
+									<option value="08.30pm">08.30pm</option>
+									<option value="08.45pm">08.45pm</option>
+									<option value="09.00pm">09.00pm</option>
+								</select>
+                                <small id="id_error_time" style="visibility: hidden;"></small>
+{#                                <div class="form-group">#}
+{#                                    <div class='input-group date' id='order_time'>#}
+{#                                        <input type='text' class="form-control" />#}
+{#                                        <span class="input-group-addon">#}
+{#                                            <span class="glyphicon glyphicon-time"></span>#}
+{#                                        </span>#}
+{#                                    </div>#}
+{#                                </div>#}
+							</div>
+
+						</div>
+					</div>
+                    <div class="row">
+                        <div class="col-md-12">
+{#                            <div class="form-group">#}
+                                <label>Table Size</label>
+                                <select class="form-control" name="number_of_persons" id="id_table_size" required>
+                                    <option value="1" selected>Table for 1</option>
+                                    <option value="2">Table for 2</option>
+                                    <option value="3">Table for 3</option>
+                                    <option value="4">Table for 4</option>
+                                    <option value="5">Table for 5</option>
+                                    <option value="6">Table for 6</option>
+                                </select>
+                                <small id="id_error_table" style="visibility: hidden;"></small>
+{#                            </div>#}
+                        </div>
+                    </div>
+					<hr>
+					<div class="row">
+						<div class="col-md-12">
+				
+								<label>Notes for the restaurant</label>
+								<textarea class="form-control" style="height:150px" placeholder="Ex. Allergies, cash change..." name="special_notes" id="notes"></textarea>
+				
+						</div>
+					</div>
+                    </form>
+				</div><!-- End box_style_1 -->
+			</div><!-- End col-md-6 -->
+            
+			<div class="col-md-3" id="sidebar">
+            	<div class="theiaStickySidebar">
+				<div id="cart_box">
+					<h3>Your order <i class="icon_cart_alt pull-right"></i></h3>
+					<table class="table table_summary">
+					<tbody>
+                    {% for item in user_cart_details %}
+					<tr>
+						<td>
+							<a data-url = "{% url 'dec-cart-view' %}" onclick="decrement_to_cart({{ item.product.id }})" id="id_dec_cart" class="remove_item"><i class="icon_minus_alt"></i></a> <strong>{{ item.qty }}x </strong>{{ item.product_name }}
+						</td>
+						<td>
+							<strong class="pull-right">Rs. {{ item.price }}</strong>
+						</td>
+					</tr>
+                    {% endfor %}
+					</tbody>
+					</table>
+					<hr>
+					<table class="table table_summary">
+					<tbody>
+                    {% get_total user_cart_details as total %}
+					<tr>
+						<td>
+							 Subtotal <span class="pull-right">Rs. {{ total }}</span>
+						</td>
+					</tr>
+                    {% get_tax user_cart_details as tax %}
+					<tr>
+						<td>
+							 Taxes <span class="pull-right">Rs. {{ tax }}</span>
+						</td>
+					</tr>
+                    {% get_liquor_status user_cart_details as status %}
+                    {% if status %}
+                    {% get_liquor_tax user_cart_details  as liquor_tax %}
+                    <tr>
+						<td>
+							 VAT <span class="pull-right">Rs. {{ liquor_tax }}</span>
+						</td>
+					</tr>
+                    {% endif %}
+                    {% get_service_charge_status user_cart_details as service_charge_status %}
+                    {% if service_charge_status %}
+                    {% get_service_charge_amount user_cart_details as service_charge %}
+                    <tr>
+						<td>
+							 Service Charge <span class="pull-right">Rs. {{ service_charge }}</span>
+						</td>
+					</tr>
+                    {% endif %}
+                    {% get_tax_total total tax liquor_tax user_cart_details as final %}
+					<tr>
+						<td class="total">
+							 TOTAL <span class="pull-right">Rs. {{ final }}</span>
+						</td>
+					</tr>
+					</tbody>
+					</table>
+					<hr>
+                    <a class="btn_full" id="rzp-button1" onclick="return create_order()">Pay Now</a>
+                    <a class="btn_full" onclick="return create_order_hotel()">Pay@Hotel</a>
+{#                    <a class="btn_full" data-url="{% url 'create-order' %}" id="rzp-button1" onclick="create_order()">Go to checkout</a>#}
+					<a class="btn_full_outline" id="cart_add_another_items"><i class="icon-right"></i> Add other items</a>
+				</div><!-- End cart_box -->
+                </div><!-- End theiaStickySidebar -->
+			</div><!-- End col-md-3 -->
+            
+		</div><!-- End row -->
+</div><!-- End container -->
+<!-- End Content =============================================== -->
+
+<div class="layer"></div><!-- Mobile menu overlay mask -->
+
+     <!-- Search Menu -->
+	<div class="search-overlay-menu">
+		<span class="search-overlay-close"><i class="icon_close"></i></span>
+		<form role="search" id="searchform" method="get">
+			<input value="" name="q" type="search" placeholder="Search..." />
+			<button type="submit"><i class="icon-search-6"></i>
+			</button>
+		</form>
+	</div>
+	<!-- End Search Menu -->
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'assets/js_home/js/theia-sticky-sidebar.js' %}"></script>
+<script>
+    jQuery('#sidebar').theiaStickySidebar({
+      additionalMarginTop: 80
+    });
+
+    function create_order(){
+        var date = $('#input_order_date').val();
+        var time = $('#delivery_schedule_time').val();
+        var table = $('#id_table_size').val();
+        console.log("the value for table is:", table)
+
+        if (!date){
+{#            $('#id_error_date').html('Please Enter a Date');#}
+{#            $('#id_error_date').attr('visibility',visible );#}
+            alert('Please Enter a Date');
+            return false
+        }
+        if(!time){
+            alert('Please Select a Time');
+            return false
+        }
+
+        if(!table){
+            alert('Please Select Table Size');
+            return false
+        }
+
+        $.ajax({
+            url: $('#id_form_create_order').attr('data-url'),
+            type: $('#id_form_create_order').attr('method'),
+            data: $('#id_form_create_order').serialize(),
+            success: function(response){
+                if(response.status){
+                    var amount = {{ final }} * 100;
+                    var options = {
+                        "key": "{{ key_id }}",
+                        "amount": amount,
+                        "name": "Queued",
+                        "description": "Legal Solutions Better Easier Faster",
+                        "handler": function (response){
+                        $('#rzp-button1').button('loading');
+                        $.ajax({
+                            url: '/verify-payment/',
+                            type:'GET',
+
+                            data : {'payment_key':response.razorpay_payment_id,'payment_price':amount},
+                            success:function(ajax_response){
+                                console.log('here');
+                            }
+                        });
+                        },
+                        "prefill": {
+                            "name": "{{ user.first_name }}",
+                            "email": "{{ user.email }}"
+                        },
+                        "notes": {
+                            "Order_Id": response.data
+                        },
+                        "theme": {
+                            "color": "#eb6a2b"
+                        }
+                    };
+                    var rzp1 = new Razorpay(options);
+                    rzp1.open();
+                }else{
+{#                    for(var i=0; i<response.errors.length; i++){#}
+{#                        if (response.errors[i].key == '__all__'){#}
+{#                            $('#id_all_error_forgot_password').text(response.errors[i].error);#}
+{#                            $('#id_all_error_forgot_password').show();#}
+{#                        }else{#}
+{#                            $('#id_'+response.errors[i].key+'_error_forgot_password').text(response.errors[i].error);#}
+{#                            $('#id_'+response.errors[i].key+'_error_forgot_password').show();#}
+{#                            $('#id_'+response.errors[i].key+'_error_parent_div_forgot_password').addClass('has-error');#}
+{#                        }#}
+{#                    }#}
+                    console.log('error');
+                }
+            }
+        });
+        return false;
+}
+
+function create_order_hotel() {
+    var date = $('#input_order_date').val();
+        var time = $('#delivery_schedule_time').val();
+        var table = $('#id_table_size').val();
+
+        if (!date){
+            alert('Please Enter a Date');
+            return false
+        }
+        if(!time){
+            alert('Please Select a Time');
+            return false
+        }
+
+        if(!table){
+            alert('Please Select Table Size');
+            return false
+        }
+        $.ajax({
+            url: '/create/order/pay/hotel/',
+            type: $('#id_form_create_order').attr('method'),
+            data: $('#id_form_create_order').serialize(),
+            success: function (response) {
+                if(response.status){
+                    console.log(location.href = response.redirect_url);
+{#                    var booking = response.data();#}
+{#                    window.location.href({% url 'order-confirmation' booking %});#}
+{#                    window.location('/order/confirmation/'+ booking +'/' );#}
+{#                        location.href = response.redirect_url;#}
+                }
+
+                else{
+                    alert('There was some problem creating your order.Please Try Again');
+                    location.reload()
+                }
+            }
+        });
+
+}
+
+</script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<!-- SPECIFIC SCRIPTS -->
+<script  src="{% static 'assets/js_home/js/cat_nav_mobile.js' %}"></script>
+<script>$('#cat_nav').mobileMenu();</script>
+<script src="{% static 'assets/js_home/js/theia-sticky-sidebar.js' %}"></script>
+
+
+{% endblock %}

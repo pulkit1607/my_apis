@@ -5,17 +5,17 @@
 	<!-- End Header =============================================== -->
 
     <!-- SubHeader =============================================== -->
-    <section class="parallax-window" id="home" data-parallax="scroll" data-image-src="{% static 'assets/img_home/img/sub_header_home.jpg' %}" data-natural-width="1400" data-natural-height="550">
+    <section class="parallax-window" id="home" data-parallax="scroll" data-image-src="{% static 'assets/images/img_21.jpg' %}" data-natural-width="1400" data-natural-height="550">
     <div id="subheader">
         <div id="sub_content">
             <h1>Pre-order your food with free reservations</h1>
             <p>
                 Say Bye-Bye to long queues at restaurant. Pre-order it and enjoy it once you arrive .
             </p>
-            <form method="post" action="list_page.html">
+            <form method="get" id="id_search_form" action="{% url 'list-all-restaurant' %}">
                 <div id="custom-search-input">
                     <div class="input-group ">
-                        <input type="text" class=" search-query" placeholder="Your Address or postal code">
+                        <input type="text" class=" search-query" id="id_search_keyword" name="keyword" placeholder="Search by Address, City, Category or Restaurant Name, or branch Name">
                         <span class="input-group-btn">
                         <input type="submit" class="btn_search" value="submit">
                         </span>
@@ -290,5 +290,14 @@
 
 <div class="layer"></div><!-- Mobile menu overlay mask -->
 
+{% endblock %}
+{% block extra_js %}
+{#    <script>#}
+{#        $('#id_search_form').on('submit', function () {#}
+{#            alert($('#id_search_keyword').val());#}
+{#            window.location.href("/list-restaurants/");#}
+{#            window.location.href = "/list-restaurants/?" + "keyword=" + $('#id_search_keyword').val();#}
+{#        });#}
+{#    </script>#}
 {% endblock %}
 

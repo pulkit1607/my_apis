@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 
-from apis.models import HotelBranch, Menu, ContactForm, Profile
+from apis.models import HotelBranch, Menu, ContactForm, Profile, Order
 from my_apis.utils import create_username
 
 class AddLocationForm(forms.ModelForm):
@@ -21,6 +21,13 @@ class ContactUsForm(forms.ModelForm):
     class Meta:
         model = ContactForm
         exclude = {}
+
+
+class OrderForm(forms.ModelForm):
+
+    class Meta:
+        model = Order
+        fields = ('date', 'time', 'number_of_persons', 'special_notes')
 
 class LoginForm(forms.Form):
     email = forms.EmailField(widget=forms.TextInput(attrs={'class':'form-control login-inputs','placeholder':'Email ID'}),

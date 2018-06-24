@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+{% load static from staticfiles %}
+{% load custom_tags %}
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.47/css/bootstrap-datetimepicker.min.css">
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- SubHeader =============================================== -->
+<section class="parallax-window" id="short" data-parallax="scroll" data-image-src="{% static 'assets/images/img_21.jpg' %}" data-natural-width="1400" data-natural-height="350">
+    <div id="subheader">
+{#	<div id="sub_content">#}
+{#    	<h1>{{ hotel_count }} Partnered Restaurants with us</h1>#}
+{#        <div><i class="icon_pin"></i> 135 Newtownards Road, Belfast, BT4 1AB</div>#}
+{#    </div><!-- End sub_content -->#}
+</div><!-- End subheader -->
+</section>
+<!-- End SubHeader ============================================ -->
+
+<!-- Content ================================================== -->
+<div class="container margin_60_35">
+		<div class="row">
+			<div class="col-md-3">
+				<div class="box_style_2 hidden-xs" id="help">
+					<i class="icon_lifesaver"></i>
+					<h4>Need <span>Help?</span></h4>
+					<a href="tel://004542344599" class="phone">+45 423 445 99</a>
+					<small>Monday to Friday 9.00am - 7.30pm</small>
+				</div>
+
+			</div><!-- End col-md-3 -->
+
+			<div class="col-md-9">
+				<div class="box_style_2" id="order_process">
+					<h2 class="inner">Order Detail ({{ user.get_full_name|title }})</h2>
+                    <div class="panel panel-default list-panel">
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label>Order Id: </label>
+                                    {{ order.order_id }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Hotel Name: </label>
+                                    {{ order.hotel.name }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Branch Name: </label>
+                                    {{ order.hotel_branch.branch_name }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label>Total Amount(Incl. of Taxes): </label>
+                                    {{ order.total_amount }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Date & Time(Dine-In): </label>
+                                    {{ order.date }} & {{ order.time }}
+                                </div>
+                                <div class="col-md-4">
+                                    <label>Hotel Address:</label>
+                                    {{ order.hotel_branch.address }}, {{ order.hotel_branch.city }}, {{ order.hotel_branch.state }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label>Hotel Contact:</label>
+                                    {{ order.hotel_branch.contact_number }}
+                                </div>
+                            </div>
+                            </div>
+                        </div>
+                    <table class="table table-responsive table-bordered display responsive no-wrap">
+                        <thead>
+                            <tr>
+                                <th style="text-align: center; vertical-align: middle;">Dish Name</th>
+                                <th style="text-align: center; vertical-align: middle;">Quantity</th>
+                                <th style="text-align: center; vertical-align: middle;">Price</th>
+                                <th style="text-align: center; vertical-align: middle;">Total Amount</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for details in order_details %}
+                                <tr class="tr"  >
+                                    <td style="text-align: center; vertical-align: middle;">{{ details.name }}</td>
+                                    <td style="text-align: center; vertical-align: middle;">{{ details.qty }}</td>
+                                    <td style="text-align: center; vertical-align: middle;">{{ details.price }}</td>
+{#                                    <td style="text-align: center; vertical-align: middle;">{% get_price details_name, order.hotel_branch.id %}</td>#}
+                                    <td style="text-align: center; vertical-align: middle;">{{ details.amount }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    </div>
+
+
+
+
+				</div><!-- End box_style_1 -->
+			</div><!-- End col-md-6 -->
+
+
+
+		</div><!-- End row -->
+</div><!-- End container -->
+<!-- End Content =============================================== -->
+
+<div class="layer"></div><!-- Mobile menu overlay mask -->
+
+     <!-- Search Menu -->
+	<div class="search-overlay-menu">
+		<span class="search-overlay-close"><i class="icon_close"></i></span>
+		<form role="search" id="searchform" method="get">
+			<input value="" name="q" type="search" placeholder="Search..." />
+			<button type="submit"><i class="icon-search-6"></i>
+			</button>
+		</form>
+	</div>
+	<!-- End Search Menu -->
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'assets/js_home/js/theia-sticky-sidebar.js' %}"></script>
+<script>
+    jQuery('#sidebar').theiaStickySidebar({
+      additionalMarginTop: 80
+    });
+
+</script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<!-- SPECIFIC SCRIPTS -->
+<script  src="{% static 'assets/js_home/js/cat_nav_mobile.js' %}"></script>
+<script>$('#cat_nav').mobileMenu();</script>
+<script src="{% static 'assets/js_home/js/theia-sticky-sidebar.js' %}"></script>
+
+
+{% endblock %}

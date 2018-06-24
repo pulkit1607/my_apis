@@ -54,6 +54,14 @@ urlpatterns = [
     url(r'^user/cart/details/$', UserCartView.as_view(), name='user-cart'),
     url(r'^add/to/cart/$', AddCartView.as_view(), name='add-cart-view'),
     url(r'^dec/to/cart/$', DecrementCartView.as_view(), name='dec-cart-view'),
+    url(r'^clear/cart/$', ClearCartView.as_view(), name='clear-cart'),
+    url(r'^order/now/$', OrderNowView.as_view(), name='order-now'),
+    url(r'^create/order/pay/now/$', CreateOrderView.as_view(), name='create-order'),
+    url(r'^create/order/pay/hotel/$', CreateOrderPayHotelView.as_view(), name='create-order-pay-hotel'),
+    url(r'^profile/update/$', ProfileUpdateView.as_view(), name='update-profile'),
+    url(r'^orders/list/$', OrdersListView.as_view(), name='orders-list'),
+    url(r'^order/detail/(?P<pk>[0-9]+)/$', OrderDetailView.as_view(), name='orders-detail'),
+    url(r'^order/confirmation/(?P<order_id>[0-9]{1,10})/$', OrderConfirmationView.as_view(), name='order-confirmation'),
 
 ]
 if settings.DEBUG:

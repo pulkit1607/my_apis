@@ -125,9 +125,30 @@ function add_to_cart(item){
         success: function(response){
             if(response.status){
                     location.reload();
-            }else{
+            }
+            // else if(response.change){
+            //     $('#id_change_restaurant').modal('show');
+            // }
+
+            else{
                 // $('#id_login_form').html(response.data);
-                alert("A problem occured while adding item to cart. Please Try again");
+                // alert("A problem occured while adding item to cart. Please Try again");
+                // $('#id_change_restaurant').modal('show');
+                var r = confirm("You cannot pre-order from two restaurants at the same time. Either click Ok to clear you cart or Cancel to not clear your cart. ");
+                if (r == true){
+                    $.ajax({
+                        url: '/clear/cart/',
+                        type: "GET",
+                        success: function (response) {
+                            if(response.status){
+                                location.reload();
+                            }
+                            else{
+                                alert("an error occured while clearing cart");
+                            }
+                        }
+                    });
+                }
             }
         }
     });
@@ -151,3 +172,76 @@ function decrement_to_cart(item){
         }
     });
 }
+
+$(document).ready(function () {
+   $('#order_date').datetimepicker({
+                    minDate: new Date(),
+                    locale: 'en',
+                    format: 'MM/DD/YYYY'
+                });
+
+   $('#order_time').datetimepicker({
+                    format: 'LT'
+                });
+
+   $('#cart_add_another_items').on('click', function () {
+       $(this).attr('href', document.referrer);
+   });
+
+});
+
+// function create_order(){
+//     $.ajax({
+//         url: $('#id_form_create_order').attr('data-url'),
+//         type: $('#id_form_create_order').attr('method'),
+//         data: $('#id_form_create_order').serialize(),
+//         success: function(response){
+//             if(response.status){
+//                 var amount = response.data[0].item;
+//                 var options = {
+// 	                "key": response.data[4].item,
+// 	                "amount": amount,
+// 	                "name": "Queued",
+//                     "description": "Legal Solutions Better Easier Faster",
+// 	                "handler": function (response){
+// 	                $('#rzp-button1').button('loading');
+//                     $.ajax({
+//                         url: '/verify-payment/',
+//                         type:'GET',
+//
+//                         data : {'payment_key':response.razorpay_payment_id,'payment_price':amount},
+//                         success:function(ajax_response){
+//                             console.log('here');
+//                         }
+//                     });
+// 	                },
+//                     "prefill": {
+//                         "name": response.data[1].item,
+//                         "email": response.data[2].item
+//                     },
+//                     "notes": {
+//                         "address": ""
+//                     },
+//                     "theme": {
+//                         "color": "#eb6a2b"
+//                     }
+//                 };
+//                 var rzp1 = new Razorpay(options);
+//                 rzp1.open();
+//             }else{
+//                 for(var i=0; i<response.errors.length; i++){
+//                     if (response.errors[i].key == '__all__'){
+//                         $('#id_all_error_forgot_password').text(response.errors[i].error);
+//                         $('#id_all_error_forgot_password').show();
+//                     }else{
+//                         $('#id_'+response.errors[i].key+'_error_forgot_password').text(response.errors[i].error);
+//                         $('#id_'+response.errors[i].key+'_error_forgot_password').show();
+//                         $('#id_'+response.errors[i].key+'_error_parent_div_forgot_password').addClass('has-error');
+//                     }
+//                 }
+//             }
+//         }
+//     });
+//     return false;
+// }
+

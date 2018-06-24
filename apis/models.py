@@ -18,6 +18,30 @@ TYPE_CHOICES = (
     (2, "NON-VEG"),
 )
 
+ORDER_STATUS = (
+    (0, "NEW"),
+    (1, "PENDING"),
+    (2, "ACCEPTED"),
+    (3, "REJECTED"),
+)
+
+PAYMENT_STATUS = (
+    (0, "NEW"),
+    (1, "AUTHORIZED"),
+    (2, "UN-AUTHORIZED"),
+    (3, "PENDING"),
+)
+
+MENU_TYPE = (
+    (0, "ALCOHOLIC"),
+    (1, "NON-ALCOHOLIC"),
+)
+
+PAYMENT_TYPE = (
+    (0, 'ONLINE'),
+    (1, 'PAY-AT-HOTEL'),
+)
+
 class Category(models.Model):
     category = models.CharField(max_length=250, null=True, blank=True)
 
@@ -27,6 +51,9 @@ class Category(models.Model):
 
 class Hotel(models.Model):
     name = models.CharField(max_length=250, null=True, blank=True)
+    image = models.ImageField(upload_to="logo/", null=True, blank=True)
+    service_charge = models.BooleanField(default=False)
+    service_charge_percent = models.CharField(max_length=100, null=True, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -78,29 +105,46 @@ class Profile(models.Model):
 
 class Menu(models.Model):
     hotel = models.ForeignKey(Hotel)
+    menu_type = models.IntegerField(choices=MENU_TYPE, null=True, blank=True)
     category = models.ForeignKey(Category)
     hotel_branch = models.ForeignKey(HotelBranch, null=True, blank=True)
     name = models.CharField(max_length=500, null=True, blank=True)
     decscription = models.TextField(null=True, blank=True)
     image = models.ImageField(upload_to="images/", null=True, blank=True)
     type = models.CharField(max_length=200, null=True, blank=True)
+    tax_percent = models.CharField(max_length=100, null=True, blank=True)
     price = models.IntegerField(default=0)
 
     def __unicode__(self):
         return u'%s (%s)' % (self.name, self.hotel)
 
 
+    def save(self, *args, **kwargs):
+        if self.menu_type == 0:
+            self.tax_percent = 20
+        else:
+            self.tax_percent = 5
+        super(Menu, self).save(*args, **kwargs)
+
+
 class Order(models.Model):
-    customer = models.ForeignKey(Profile)
+    customer = models.ForeignKey(Profile, null=True, blank=True)
     order_id = models.CharField(max_length=32, unique=True)
-    hotel = models.ForeignKey(Hotel)
+    razorpay_id = models.CharField(max_length=40, null=True, blank=True)
+    hotel = models.ForeignKey(Hotel, null=True, blank=True)
     hotel_branch = models.ForeignKey(HotelBranch, null=True, blank=True)
-    total_amount = models.CharField(max_length=50, null=True)
-    date = models.DateField(null=True, blank=False)
+    total_amount = models.CharField(max_length=50, null=True, blank=True)
+    food_tax = models.CharField(max_length=50, null=True, blank=True)
+    liquor_tax = models.CharField(max_length=50, null=True, blank=True)
+    service_charge = models.CharField(max_length=50, null=True, blank=True)
+    total_incl_amount = models.CharField(max_length=50, null=True, blank=True)
+    date = models.DateField(null=True, blank=True)
     time = models.CharField(max_length=100, null=True, blank=True)
-    number_of_persons = models.IntegerField(null=True, blank=True)
-    accepted = models.BooleanField(default=False)
-    rejected = models.BooleanField(default=False)
+    number_of_persons = models.IntegerField(default=0)
+    special_notes = models.TextField(null=True, blank=True)
+    order_status = models.IntegerField(choices=ORDER_STATUS, null=True, blank=True)
+    payment_status = models.IntegerField(choices=PAYMENT_STATUS, null=True, blank=True)
+    payment_type = models.IntegerField(choices=PAYMENT_TYPE, null=True, blank=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 
@@ -119,6 +163,7 @@ class OrderDetails(models.Model):
     name = models.CharField(max_length=300, null=True)
     qty = models.IntegerField(default=1, null=True, blank=True)
     amount = models.CharField(max_length=250, null=True)
+    price = models.CharField(max_length=250, null=True)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 

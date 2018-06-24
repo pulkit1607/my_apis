@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'qzm)=u#tt+w6(a0@p3a)nqwnx+avdkuwl@74bmk0vl_gr+i!j6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework.authtoken',
     'storages',
+    'django.contrib.postgres',
 ]
 
 MIDDLEWARE = [
@@ -192,7 +193,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'static/')
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
@@ -202,6 +203,13 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 MEDIA_URL = '/media/'
 # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+
+if DEBUG:
+    STATICFILES_DIRS = (
+        os.path.join("static/"),
+    )
+else:
+    STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 
 # TEST RAZORPAY CREDENTIALS
@@ -213,8 +221,8 @@ GOOGLE_MAPS_GEOLOCATION_KEY = "AIzaSyB8L5XklsbEJ-_R5v-YJe7Znl08m-4n2Zw"
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'confirmation@aashyanalakhanpal.com'
-EMAIL_HOST_PASSWORD = 'x#N+$aT7Pwi8'
-DEFAULT_FROM_EMAIL = 'confirmation@aashyanalakhanpal.com'
-DEFAULT_TO_EMAIL = 'confirmation@aashyanalakhanpal.com'
+EMAIL_HOST_USER = 'no-reply@queued.co.in'
+EMAIL_HOST_PASSWORD = 'carpediem'
+DEFAULT_FROM_EMAIL = 'no-reply@queued.co.in'
+DEFAULT_TO_EMAIL = 'no-reply@queued.co.in'
 DEFAULT_FROM_EMAIL_NAME = 'QUEUED'

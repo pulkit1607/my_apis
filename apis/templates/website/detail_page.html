@@ -10,7 +10,10 @@
 <section class="parallax-window" data-parallax="scroll" data-image-src="img/sub_header_2.jpg" data-natural-width="1400" data-natural-height="470">
     <div id="subheader">
 	<div id="sub_content">
-    	<div id="thumb"><img src="{% static 'assets/img_home/img/thumb_restaurant.jpg' %}" alt=""></div>
+    	<div id="thumb">
+{#            <img src="{% static 'assets/img_home/img/thumb_restaurant.jpg' %}" alt="">#}
+            <img src="{{ hotel.hotel.image.url }}" alt="">
+        </div>
                      <div class="rating"><i class="icon_star voted"></i><i class="icon_star voted"></i><i class="icon_star voted"></i><i class="icon_star voted"></i><i class="icon_star"></i> (<small><a href="detail_page_2.html">Read 98 reviews</a></small>)</div>
                     <h1>{{ hotel.hotel.name }}</h1>
                     <div><em>Branch Name: {{ hotel.branch_name }}</em></div>
@@ -66,9 +69,9 @@
 					<h2 class="inner">Menu</h2>
                     {% for category in categories %}
 					    <h3 class="nomargin_top" id="#{{ category.category }}">{{ category.category }}</h3>
-                        <p>
-                            Te ferri iisque aliquando pro, posse nonumes efficiantur in cum. Sensibus reprimique eu pro. Fuisset mentitum deleniti sit ea.
-                        </p>
+{#                        <p>#}
+{#                            Te ferri iisque aliquando pro, posse nonumes efficiantur in cum. Sensibus reprimique eu pro. Fuisset mentitum deleniti sit ea.#}
+{#                        </p>#}
                         <table class="table table-striped cart-list">
                             <thead>
                                 <tr>
@@ -83,8 +86,8 @@
                                 {% for item in items %}
                                     <tr>
                                         <td>
-                                            <figure class="thumb_menu_list"><img src="{% static 'assets/img_home/img/menu-thumb-1.jpg' %}" alt="thumb"></figure>
-                                            <h5>{{ forloop.counter }}  {{ item.name }}</h5>
+                                            <figure class="thumb_menu_list"><img src="{{ item.image.url }}" alt="thumb"></figure>
+                                            <h5>{{ forloop.counter }}.  {{ item.name }}</h5>
                                             <p>
                                                 {{ item.decscription }}.
                                             </p>
@@ -117,7 +120,7 @@
                     {% for item in user_cart_details %}
 					<tr>
 						<td>
-							<a data-url = "{% url 'dec-cart-view' %}" onclick="decrement_to_cart({{ item.id }})" id="id_dec_cart" class="remove_item"><i class="icon_minus_alt"></i></a> <strong>{{ item.qty }}x </strong>{{ item.product_name }}
+							<a data-url = "{% url 'dec-cart-view' %}" onclick="decrement_to_cart({{ item.product.id }})" id="id_dec_cart" class="remove_item"><i class="icon_minus_alt"></i></a> <strong>{{ item.qty }}x </strong>{{ item.product_name }}
 						</td>
 						<td>
 							<strong class="pull-right">Rs. {{ item.price }}</strong>
@@ -177,20 +180,40 @@
 							 Subtotal <span class="pull-right">Rs. {{ total }}</span>
 						</td>
 					</tr>
+                    {% get_tax user_cart_details as tax %}
 					<tr>
 						<td>
-							 Delivery fee <span class="pull-right">$10</span>
+							 Taxes <span class="pull-right">Rs. {{ tax }}</span>
 						</td>
 					</tr>
+                    {% get_liquor_status user_cart_details as status %}
+                    {% if status %}
+                    {% get_liquor_tax user_cart_details  as liquor_tax %}
+                    <tr>
+						<td>
+							 VAT <span class="pull-right">Rs. {{ liquor_tax }}</span>
+						</td>
+					</tr>
+                    {% endif %}
+                    {% get_service_charge_status user_cart_details as service_charge_status %}
+                    {% if service_charge_status %}
+                    {% get_service_charge_amount user_cart_details as service_charge %}
+                    <tr>
+						<td>
+							 Service Charge <span class="pull-right">Rs. {{ service_charge }}</span>
+						</td>
+					</tr>
+                    {% endif %}
+                    {% get_tax_total total tax liquor_tax user_cart_details as final %}
 					<tr>
 						<td class="total">
-							 TOTAL <span class="pull-right">$66</span>
+							 TOTAL <span class="pull-right">Rs. {{ final }}</span>
 						</td>
 					</tr>
 					</tbody>
 					</table>
 					<hr>
-					<a class="btn_full" href="cart.html">Order now</a>
+					<a class="btn_full" href="{% url 'order-now' %}">Order now</a>
 				</div><!-- End cart_box -->
                 </div><!-- End theiaStickySidebar -->
 			</div><!-- End col-md-3 -->
@@ -212,6 +235,7 @@
 		</form>
 	</div>
 	<!-- End Search Menu -->
+
 {% endblock %}
 {% block extra_js %}
 
