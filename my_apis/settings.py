@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'qzm)=u#tt+w6(a0@p3a)nqwnx+avdkuwl@74bmk0vl_gr+i!j6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -201,7 +201,7 @@ STATIC_URL = '/static/'
 # AWS_ACCESS_KEY_ID = 'AKIAIXW5DZXFD6PXCW2A'
 # AWS_SECRET_ACCESS_KEY = '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'
 # AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-# MEDIA_URL = '/media/'
+
 # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
@@ -218,6 +218,7 @@ RAZORPAY_KEY_ID = "rzp_test_S7gxsV55dTOz1E"
 RAZORPAY_KEY_KEY = "PsQyqccC4iZFH5wcewxIEu35"
 
 GOOGLE_MAPS_GEOLOCATION_KEY = "AIzaSyB8L5XklsbEJ-_R5v-YJe7Znl08m-4n2Zw"
+MEDIA_URL = '/media/'
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
