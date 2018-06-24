@@ -201,8 +201,9 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # AWS_ACCESS_KEY_ID = 'AKIAIXW5DZXFD6PXCW2A'
 # AWS_SECRET_ACCESS_KEY = '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'
 # AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-MEDIA_URL = '/media/'
+# MEDIA_URL = '/media/'
 # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 if DEBUG:
     STATICFILES_DIRS = (
