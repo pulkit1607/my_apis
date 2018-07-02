@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 
-from apis.models import HotelBranch, Menu, ContactForm, Profile, Order
+from apis.models import HotelBranch, Menu, ContactForm, Profile, Order, ContactUs
 from my_apis.utils import create_username
 
 class AddLocationForm(forms.ModelForm):
@@ -16,11 +16,17 @@ class AddMenuForm(forms.ModelForm):
         model = Menu
         exclude = ('hotel', )
 
+# class ContactUsForm(forms.ModelForm):
+#
+#     class Meta:
+#         model = ContactForm
+#         exclude = {}
+
 class ContactUsForm(forms.ModelForm):
 
     class Meta:
-        model = ContactForm
-        exclude = {}
+        model = ContactUs
+        exclude = {'created', 'modified',}
 
 
 class OrderForm(forms.ModelForm):

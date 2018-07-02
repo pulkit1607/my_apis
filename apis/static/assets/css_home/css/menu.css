@@ -109,28 +109,30 @@ box-shadow:         1px 0px 5px 0px rgba(50, 50, 50, 0.55);}
 a.show-submenu-mega + .menu-wrapper{display: none;visibility: hidden;}
 a.show-submenu-mega + .menu-wrapper.show_mega,
 .main-menu a.show-submenu + ul.show_normal  {display: block;visibility: visible;}
-	
+
+/*Commented for online marketing only */
+
 /* Hamburger menu button*/
-.cmn-toggle-switch {
-  position: relative;
-  display:block;
-  overflow: visible;
-  position:absolute; 
-  top:0;
-  right:15px;
-  margin: 0;
-  padding: 0;
-  width: 30px;
-  height: 30px;
-  font-size: 0;
-  text-indent: -9999px;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  box-shadow: none;
-  border: none;
-  cursor: pointer;
-}
+/*.cmn-toggle-switch {*/
+  /*position: relative;*/
+  /*display:block;*/
+  /*overflow: visible;*/
+  /*position:absolute; */
+  /*top:0;*/
+  /*right:15px;*/
+  /*margin: 0;*/
+  /*padding: 0;*/
+  /*width: 30px;*/
+  /*height: 30px;*/
+  /*font-size: 0;*/
+  /*text-indent: -9999px;*/
+  /*-webkit-appearance: none;*/
+  /*-moz-appearance: none;*/
+  /*appearance: none;*/
+  /*box-shadow: none;*/
+  /*border: none;*/
+  /*cursor: pointer;*/
+/*}*/
 
 .cmn-toggle-switch:focus {outline: none;}
 .cmn-toggle-switch span {display: block;position: absolute;top: 10px;left: 0;right: 0;height: 2px;background: white;}

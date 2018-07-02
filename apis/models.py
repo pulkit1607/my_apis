@@ -157,6 +157,15 @@ class Order(models.Model):
     def __unicode__(self):
         return self.order_id
 
+    def get_order_status(self):
+        return dict(ORDER_STATUS).get(self.order_status)
+
+    def get_payment_status(self):
+        return dict(PAYMENT_STATUS).get(self.payment_status)
+
+    def get_payment_type(self):
+        return dict(PAYMENT_TYPE).get(self.payment_type)
+
 
 class OrderDetails(models.Model):
     order = models.ForeignKey(Order)
@@ -253,3 +262,13 @@ def get_unique_refund_id(instance):
     if Refund.objects.filter(refund_id=unique_id).exists():
         get_unique_refund_id(instance)
     return unique_id
+
+class ContactUs(models.Model):
+    name = models.CharField(max_length=250, null=True, blank=False)
+    email = models.EmailField(null=True, blank=False)
+    phone = models.CharField(max_length=250, null=True, blank=False)
+    created = models.DateTimeField(auto_now_add=True)
+    modified = models.DateTimeField(auto_now=True)
+
+    def __unicode__(self):
+        return self.name

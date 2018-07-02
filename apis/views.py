@@ -6,6 +6,8 @@ from django.views import View
 from django.views.generic import TemplateView
 from rest_framework import generics, schemas
 from datetime import date, timedelta
+from instamojo_wrapper import Instamojo
+from my_apis import settings
 
 from braces.views import AjaxResponseMixin, JSONResponseMixin
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
@@ -1039,21 +1041,39 @@ class VendorOrderListView(TemplateView, LoginRequiredMixin):
         context['count'] = orders.count()
         return context
 
-class VerifyPaymentView(TemplateView):
-    template_name = 'dashboard/index.html'
+class VerifyPaymentView(AjaxResponseMixin, JSONResponseMixin, View):
 
-    def get_context_data(self, **kwargs):
-        context = super(VerifyPaymentView, self).get_context_data(**kwargs)
+    def get_ajax(self, request, *args, **kwargs):
+        print "inside Get"
+        response = {'status': False, 'errors': [], 'data': 0}
         payment_key = self.request.GET.get('payment_key')
         payment_price = self.request.GET.get('payment_price')
-
+        order_id = self.request.GET.get('order_id')
+        print order_id
         url = 'https://api.razorpay.com/v1/payments/' + payment_key + '/capture'
         r = requests.post(url, data={'amount': payment_price},
                           auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_KEY))
         print "the something is:", r.status_code, self.request.GET.get('payment_key')
 
-        return context
+        response['redirect_url'] = '/order/confirmation/' + order_id + '/'
+        response['status'] = True
+        return self.render_json_response(response)
 
+    # def post_ajax(self, request, *args, **kwargs):
+    #     print "inside Post"
+    #     response = {'status': False, 'errors': [], 'data': 0}
+    #     payment_key = self.request.GET.get('payment_key')
+    #     payment_price = self.request.GET.get('payment_price')
+    #     order_id = self.request.GET.get('order_id')
+    #     print order_id
+    #     url = 'https://api.razorpay.com/v1/payments/' + payment_key + '/capture'
+    #     r = requests.post(url, data={'amount': payment_price},
+    #                       auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_KEY))
+    #     print "the something is:", r.status_code, self.request.GET.get('payment_key')
+    #
+    #     response['redirect_url'] = '/order/confirmation/' + order_id + '/'
+    #     response['status'] = True
+    #     return self.render_json_response(response)
 
 class HomeView(TemplateView):
     template_name = "website/index.html"
@@ -1466,26 +1486,51 @@ class CreateOrderView(AjaxResponseMixin, JSONResponseMixin, View):
         cart = Cart.objects.get(customer=request.user)
         cart_details = CartDetails.objects.filter(cart=cart).first()
         amount = 0
+        liquor_tax = 0
+        food_tax = 0
+        amount_bsc = 0  ##Amount before Service Charge
+        service_charge = 0
+
+        ## 9811714766 - Rajat Chopra
+
+        total_amount = 0
         cd = CartDetails.objects.filter(cart=cart)
         for item in cd:
-            amount = amount + item.price
+            amount = amount + (item.qty * item.product.price)
+            if item.product.menu_type == 0:
+                liquor_tax_percent = int(item.product.price * 0.18)
+                tax_amount = int(item.qty * liquor_tax_percent)
+                liquor_tax = liquor_tax + tax_amount
+            else:
+                food_tax_percent = int(item.product.price * 0.05)
+                tax_amount = int(item.qty * food_tax_percent)
+                food_tax = food_tax + tax_amount
 
-        tax = int(amount * 0.05)
-        total_amount = amount + tax
+        amount_bsc = amount_bsc + amount + liquor_tax + food_tax
+
+        if cart_details.product.hotel.service_charge:
+            service_charge_percent = (int(cart_details.product.hotel.service_charge_percent) / float(100))
+            service_charge = int(amount_bsc * service_charge_percent)
+
+        total_amount = amount_bsc + service_charge
 
         if form.is_valid():
             order = form.save(commit=False)
-            order.customer=request.user.profile
+            order.customer = request.user.profile
             order.hotel = cart_details.product.hotel
             order.hotel_branch = cart_details.product.hotel_branch
-            order.total_amount=total_amount
+            order.total_amount = amount
+            order.food_tax = food_tax
+            order.liquor_tax = liquor_tax
+            order.service_charge = service_charge
+            order.total_incl_amount = total_amount
             order.date = form.cleaned_data['date']
             order.time = form.cleaned_data['time']
             order.special_notes = form.cleaned_data['special_notes']
             order.number_of_persons = form.cleaned_data['number_of_persons']
-            order.order_status = 0
-            order.payment_status = 0
-            order.payment_type = 0
+            order.order_status = 1
+            order.payment_status = 3
+            order.payment_type = 1
             order.save()
 
         for each in cd:
@@ -1495,6 +1540,25 @@ class CreateOrderView(AjaxResponseMixin, JSONResponseMixin, View):
                 qty=each.qty,
                 amount=each.price
             )
+
+        ##InstaMojo Testing
+
+
+
+        api = Instamojo(api_key=settings.PRIVATE_API_KEY,
+                        auth_token=settings.PRIVATE_AUTH_TOKEN)
+
+        # Create a new Payment Request
+        response = api.payment_request_create(
+            amount=order.total_incl_amount,
+            purpose='Bill',
+            send_email=True,
+            email=order.customer.user.email,
+            redirect_url="/order/confirmation/"+ order.order_id + "/"
+        )
+
+        # print response['payment_request']['longurl']
+        # print response['payment_request']['id']
 
         response['status'] = True
         response['data'] = order.order_id
@@ -1608,7 +1672,7 @@ class OrdersListView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super(OrdersListView, self).get_context_data(**kwargs)
         profile = Profile.objects.get(user=self.request.user)
-        orders = Order.objects.filter(customer=profile)
+        orders = Order.objects.filter(customer=profile).order_by('-date')
         context['orders'] = orders
         return context
 

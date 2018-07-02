@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'qzm)=u#tt+w6(a0@p3a)nqwnx+avdkuwl@74bmk0vl_gr+i!j6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -216,6 +216,11 @@ else:
 # TEST RAZORPAY CREDENTIALS
 RAZORPAY_KEY_ID = "rzp_test_S7gxsV55dTOz1E"
 RAZORPAY_KEY_KEY = "PsQyqccC4iZFH5wcewxIEu35"
+
+#INSTAMOJO CREDENTIALS
+PRIVATE_API_KEY = "17dc18b558c84e50dcf97dd2ade37624"
+PRIVATE_AUTH_TOKEN = "1a733717bcd1fa397dd0d04d3bace0fa"
+PRIVATE_SALT = "0e98c4c9b94f4b63916a087075e2f95e"
 
 GOOGLE_MAPS_GEOLOCATION_KEY = "AIzaSyB8L5XklsbEJ-_R5v-YJe7Znl08m-4n2Zw"
 MEDIA_URL = '/media/'

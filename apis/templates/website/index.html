@@ -1,36 +1,43 @@
 {% extends 'base.html' %}
 {% load static from staticfiles %}
 {% block content %}
-
+{# uncomment line number 63 from responsive.css and uncomment hamburg from menu.css and all other commented code in style.css !IMP #}
 	<!-- End Header =============================================== -->
 
     <!-- SubHeader =============================================== -->
-    <section class="parallax-window" id="home" data-parallax="scroll" data-image-src="{% static 'assets/images/img_21.jpg' %}" data-natural-width="1400" data-natural-height="550">
+{#    <section class="parallax-window" id="home" data-parallax="scroll" data-image-src="{% static 'assets/images/img_21.jpg' %}" data-natural-width="1400" data-natural-height="550">#}
+    <section class="parallax-window" id="home" data-parallax="scroll" data-image-src="{% static 'assets/img_home/img/website_cover.jpg' %}" data-natural-width="1400" data-natural-height="550">
     <div id="subheader">
         <div id="sub_content">
             <h1>Pre-order your food with free reservations</h1>
             <p>
                 Say Bye-Bye to long queues at restaurant. Pre-order it and enjoy it once you arrive .
             </p>
-            <form method="get" id="id_search_form" action="{% url 'list-all-restaurant' %}">
-                <div id="custom-search-input">
-                    <div class="input-group ">
-                        <input type="text" class=" search-query" id="id_search_keyword" name="keyword" placeholder="Search by Address, City, Category or Restaurant Name, or branch Name">
-                        <span class="input-group-btn">
-                        <input type="submit" class="btn_search" value="submit">
-                        </span>
-                    </div>
-                </div>
-            </form>
+            <p>
+                <strong>Launching Soon at Cyber hub, Gurgaon.</strong>
+            </p>
+            <p>
+                <a href="#0" data-toggle="modal" data-target="#contact_us"><strong>Register with us to get Exciting offers and Great Discounts </strong></a>
+            </p>
+{#            <form method="get" id="id_search_form" action="{% url 'list-all-restaurant' %}">#}
+{#                <div id="custom-search-input">#}
+{#                    <div class="input-group ">#}
+{#                        <input type="text" class=" search-query" id="id_search_keyword" name="keyword" placeholder="Search by Address, City, Category or Restaurant Name, or branch Name">#}
+{#                        <span class="input-group-btn">#}
+{#                        <input type="submit" class="btn_search" value="submit">#}
+{#                        </span>#}
+{#                    </div>#}
+{#                </div>#}
+{#            </form>#}
         </div><!-- End sub_content -->
     </div><!-- End subheader -->
-    <div id="count" class="hidden-xs">
-        <ul>
-            <li><span class="number">2650</span> Restaurant</li>
-            <li><span class="number">5350</span> People Served</li>
-            <li><span class="number">12350</span> Registered Users</li>
-        </ul>
-    </div>
+{#    <div id="count" class="hidden-xs">#}
+{#        <ul>#}
+{#            <li><span class="number">2650</span> Restaurant</li>#}
+{#            <li><span class="number">5350</span> People Served</li>#}
+{#            <li><span class="number">12350</span> Registered Users</li>#}
+{#        </ul>#}
+{#    </div>#}
     </section><!-- End section --><!-- End Header video -->
     <!-- End SubHeader ============================================ -->
 
@@ -39,9 +46,9 @@
 
          <div class="main_title">
             <h2 class="nomargin_top" style="padding-top:0">How it works</h2>
-            <p>
-                Cum doctus civibus efficiantur in imperdiet deterruisset.
-            </p>
+{#            <p>#}
+{#                Cum doctus civibus efficiantur in imperdiet deterruisset.#}
+{#            </p>#}
         </div>
         <div class="row">
             <div class="col-md-3">
@@ -72,11 +79,11 @@
                 </div>
             </div>
             <div class="col-md-3">
-                <div class="box_home" id="four" style="background-image: url('{% static "assets/img_home/img/icon_home_4.svg" %}')">
+                <div class="box_home" id="four" style="background-image: url('{% static "assets/img_home/img/icon4.1.svg" %}')">
                     <span>4</span>
-                    <h3>Delivery or takeaway</h3>
+                    <h3>Dine-In</h3>
                     <p>
-                        You are lazy? Are you backing home?
+                        Arrive at your time and enjoy your meal with Queued Priority.
                     </p>
                 </div>
             </div>
@@ -240,13 +247,13 @@
 {#        </div><!-- End container -->#}
 {#        </div><!-- End white_bg -->#}
 
-       <div class="high_light">
-      	<div class="container">
-      		<h3>Choose from our partnered Restaurants</h3>
-            <p></p>
-            <a href="{% url 'list-all-restaurant' %}">View all Restaurants</a>
-        </div><!-- End container -->
-      </div><!-- End hight_light -->
+{#       <div class="high_light">#}
+{#      	<div class="container">#}
+{#      		<h3>Choose from our partnered Restaurants</h3>#}
+{#            <p></p>#}
+{#            <a href="{% url 'list-all-restaurant' %}">View all Restaurants</a>#}
+{#        </div><!-- End container -->#}
+{#      </div><!-- End hight_light -->#}
 
 {#    <section class="parallax-window" data-parallax="scroll" data-image-src="{% static 'assets/img_home/img/bg_office.jpg' %}" data-natural-width="1200" data-natural-height="600">#}
 {#    <div class="parallax-content">#}
@@ -261,32 +268,216 @@
 {#    </section><!-- End section -->#}
     <!-- End Content =============================================== -->
 
-    <div class="container margin_60">
-      <div class="main_title margin_mobile">
-            <h2 class="nomargin_top">Work with Us</h2>
-            <p>
-                Cum doctus civibus efficiantur in imperdiet deterruisset.
-            </p>
-        </div>
-      	<div class="row">
-            <div class="col-md-4 col-md-offset-2">
-            	<a class="box_work" href="submit_restaurant.html">
-                <img src="{% static 'assets/img_home/img/submit_restaurant.jpg' %}" width="848" height="480" alt="" class="img-responsive">
-                <h3>Submit your Restaurant<span>Start to earn customers</span></h3>
-                <p>Lorem ipsum dolor sit amet, ut virtute fabellas vix, no pri falli eloquentiam adversarium. Ea legere labore eam. Et eum sumo ocurreret, eos ei saepe oratio omittantur, legere eligendi partiendo pro te.</p>
-                <div class="btn_1">Read more</div>
-                </a>
-            </div>
-            <div class="col-md-4">
-            	<a class="box_work" href="submit_driver.html">
-                <img src="{% static 'assets/img_home/img/delivery.jpg' %}" width="848" height="480" alt="" class="img-responsive">
-				<h3>We are looking for a Driver<span>Start to earn money</span></h3>
-                <p>Lorem ipsum dolor sit amet, ut virtute fabellas vix, no pri falli eloquentiam adversarium. Ea legere labore eam. Et eum sumo ocurreret, eos ei saepe oratio omittantur, legere eligendi partiendo pro te.</p>
-                <div class="btn_1">Read more</div>
-                </a>
-            </div>
-      </div><!-- End row -->
-      </div><!-- End container -->
+{#    <div class="white_bg">#}
+{#    <div class="container margin_60">#}
+{##}
+{#        <div class="main_title">#}
+{#            <h2 class="nomargin_top">Our Partners</h2>#}
+{#            <p>#}
+{#                Cum doctus civibus efficiantur in imperdiet deterruisset.#}
+{#            </p>#}
+{#        </div>#}
+{##}
+{#        <div class="row">#}
+{#            <div class="col-md-6">#}
+{#                <a href="detail_page.html" class="strip_list">#}
+{#                <div class="ribbon_1">Popular</div>#}
+{#                    <div class="desc">#}
+{#                        <div class="thumb_strip">#}
+{#                            <img src="{% static 'assets/img_home/img/thumb_restaurant.jpg' %}" alt="">#}
+{#                        </div>#}
+{#                        <div class="rating">#}
+{#                            <i class="icon_star voted"></i><i class="icon_star voted"></i><i class="icon_star voted"></i><i class="icon_star voted"></i><i class="icon_star"></i>#}
+{#                        </div>#}
+{#                        <h3>Taco Mexican</h3>#}
+{#                        <div class="type">#}
+{#                            Mexican / American#}
+{#                        </div>#}
+{#                        <div class="location">#}
+{#                            135 Newtownards Road, Belfast, BT4. <span class="opening">Opens at 17:00</span>#}
+{#                        </div>#}
+{#                        <ul>#}
+{#                            <li>Take away<i class="icon_check_alt2 ok"></i></li>#}
+{#                            <li>Delivery<i class="icon_check_alt2 ok"></i></li>#}
+{#                        </ul>#}
+{#                    </div><!-- End desc-->#}
+{#                </a><!-- End strip_list-->#}
+{#               <a href="detail_page.html" class="strip_list">#}
+{#               <div class="ribbon_1">Popular</div>#}
+{#                    <div class="desc">#}
+{#                        <div class="thumb_strip">#}
+{#                            <img src="{% static 'assets/img_home/img/thumb_restaurant_2.jpg' %}" alt="">#}
+{#                        </div>#}
+{#                        <div class="rating">#}
+{#                            <i class="icon_star voted"></i><i class="icon_star voted"></i><i class="icon_star voted"></i><i class="icon_star voted"></i><i class="icon_star"></i>#}
+{#                        </div>#}
+{#                        <h3>Naples Pizza</h3>#}
+{#                        <div class="type">#}
+{#                            Italian / Pizza#}
+{#                        </div>#}
+{#                        <div class="location">#}
+{#                            135 Newtownards Road, Belfast, BT4. <span class="opening">Opens at 17:00</span>#}
+{#                        </div>#}
+{#                        <ul>#}
+{#                            <li>Take away<i class="icon_check_alt2 ok"></i></li>#}
+{#                            <li>Delivery<i class="icon_check_alt2 ok"></i></li>#}
+{#                        </ul>#}
+{#                    </div><!-- End desc-->#}
+{#                </a><!-- End strip_list-->#}
+{#                <a href="detail_page.html" class="strip_list">#}
+{#                <div class="ribbon_1">Popular</div>#}
+{#                    <div class="desc">#}
+{#                        <div class="thumb_strip">#}
+{#                            <img src="{% static 'assets/img_home/img/thumb_restaurant_3.jpg' %}" alt="">#}
+{#                        </div>#}
+{#                        <div class="rating">#}
+{#                            <i class="icon_star voted"></i><i class="icon_star voted"></i><i class="icon_star voted"></i><i class="icon_star voted"></i><i class="icon_star"></i>#}
+{#                        </div>#}
+{#                        <h3>Japan Food</h3>#}
+{#                        <div class="type">#}
+{#                            Sushi / Japanese#}
+{#                        </div>#}
+{#                        <div class="location">#}
+{#                            135 Newtownards Road, Belfast, BT4. <span class="opening">Opens at 17:00</span>#}
+{#                        </div>#}
+{#                        <ul>#}
+{#                            <li>Take away<i class="icon_check_alt2 ok"></i></li>#}
+{#                            <li>Delivery<i class="icon_check_alt2 ok"></i></li>#}
+{#                        </ul>#}
+{#                    </div><!-- End desc-->#}
+{#                </a><!-- End strip_list-->#}
+{#            </div><!-- End col-md-6-->#}
+{#            <div class="col-md-6">#}
+{#                <a href="detail_page.html" class="strip_list">#}
+{#                <div class="ribbon_1">Popular</div>#}
+{#                    <div class="desc">#}
+{#                        <div class="thumb_strip">#}
+{#                            <img src="{% static 'assets/img_home/img/thumb_restaurant_4.jpg' %}" alt="">#}
+{#                        </div>#}
+{#                        <div class="rating">#}
+{#                            <i class="icon_star voted"></i><i class="icon_star voted"></i><i class="icon_star voted"></i><i class="icon_star voted"></i><i class="icon_star"></i>#}
+{#                        </div>#}
+{#                        <h3>Sushi Gold</h3>#}
+{#                        <div class="type">#}
+{#                            Sushi / Japanese#}
+{#                        </div>#}
+{#                        <div class="location">#}
+{#                            135 Newtownards Road, Belfast, BT4. <span class="opening">Opens at 17:00</span>#}
+{#                        </div>#}
+{#                        <ul>#}
+{#                            <li>Take away<i class="icon_check_alt2 ok"></i></li>#}
+{#                            <li>Delivery<i class="icon_close_alt2 no"></i></li>#}
+{#                        </ul>#}
+{#                    </div><!-- End desc-->#}
+{#                </a><!-- End strip_list-->#}
+{#                <a href="detail_page.html" class="strip_list">#}
+{#                <div class="ribbon_1">Popular</div>#}
+{#                    <div class="desc">#}
+{#                        <div class="thumb_strip">#}
+{#                            <img src="{% static 'assets/img_home/img/thumb_restaurant_5.jpg' %}" alt="">#}
+{#                        </div>#}
+{#                        <div class="rating">#}
+{#                            <i class="icon_star voted"></i><i class="icon_star voted"></i><i class="icon_star voted"></i><i class="icon_star voted"></i><i class="icon_star"></i>#}
+{#                        </div>#}
+{#                        <h3>Dragon Tower</h3>#}
+{#                        <div class="type">#}
+{#                            Chinese / Thai#}
+{#                        </div>#}
+{#                        <div class="location">#}
+{#                            135 Newtownards Road, Belfast, BT4. <span class="opening">Opens at 17:00</span>#}
+{#                        </div>#}
+{#                        <ul>#}
+{#                            <li>Take away<i class="icon_check_alt2 ok"></i></li>#}
+{#                            <li>Delivery<i class="icon_check_alt2 ok"></i></li>#}
+{#                        </ul>#}
+{#                    </div><!-- End desc-->#}
+{#                </a><!-- End strip_list-->#}
+{#                <a href="detail_page.html" class="strip_list">#}
+{#                <div class="ribbon_1">Popular</div>#}
+{#                    <div class="desc">#}
+{#                        <div class="thumb_strip">#}
+{#                            <img src="{% static 'assets/img_home/img/thumb_restaurant_6.jpg' %}" alt="">#}
+{#                        </div>#}
+{#                        <div class="rating">#}
+{#                            <i class="icon_star voted"></i><i class="icon_star voted"></i><i class="icon_star voted"></i><i class="icon_star voted"></i><i class="icon_star"></i>#}
+{#                        </div>#}
+{#                        <h3>China Food</h3>#}
+{#                        <div class="type">#}
+{#                            Chinese / Vietnam#}
+{#                        </div>#}
+{#                        <div class="location">#}
+{#                            135 Newtownards Road, Belfast, BT4. <span class="opening">Opens at 17:00</span>#}
+{#                        </div>#}
+{#                        <ul>#}
+{#                            <li>Take away<i class="icon_check_alt2 ok"></i></li>#}
+{#                            <li>Delivery<i class="icon_check_alt2 ok"></i></li>#}
+{#                        </ul>#}
+{#                    </div><!-- End desc-->#}
+{#                </a><!-- End strip_list-->#}
+{#            </div>#}
+{#        </div><!-- End row -->#}
+{##}
+{#        </div><!-- End container -->#}
+{#        </div><!-- End white_bg -->#}
+
+
+{#    <div class="container margin_60">#}
+{#      <div class="main_title margin_mobile">#}
+{#            <h2 class="nomargin_top">Work with Us</h2>#}
+{#            <p>#}
+{#                Cum doctus civibus efficiantur in imperdiet deterruisset.#}
+{#            </p>#}
+{#        </div>#}
+{#      	<div class="row">#}
+{#            <div class="col-md-4 col-md-offset-2">#}
+{#            	<a class="box_work" href="submit_restaurant.html">#}
+{#                <img src="{% static 'assets/img_home/img/submit_restaurant.jpg' %}" width="848" height="480" alt="" class="img-responsive">#}
+{#                <h3>Submit your Restaurant<span>Start to earn customers</span></h3>#}
+{#                <p>Partner With Us.</p>#}
+{#                <div class="btn_1">Read more</div>#}
+{#                </a>#}
+{#            </div>#}
+{#            <div class="col-md-4">#}
+{#            	<a class="box_work" href="https://www.indiaaccelerator.co/" target="_blank">#}
+{#                <img src="{% static 'assets/img_home/img/delivery.jpg' %}" width="848" height="480" alt="" class="img-responsive">#}
+{#				<h3>Incubation Partner<span>Powered by:</span></h3>#}
+{#                <p>India Accelerator</p>#}
+{#                <div class="btn_1">Read more</div>#}
+{#                </a>#}
+{#            </div>#}
+{#            <div class="col-md-4">#}
+{#            	<a class="box_work" href="submit_driver.html">#}
+{#                <img src="{% static 'assets/img_home/img/delivery.jpg' %}" width="848" height="480" alt="" class="img-responsive">#}
+{#				<h3>We are looking for a Driver<span>Start to earn money</span></h3>#}
+{#                <p>Lorem ipsum dolor sit amet, ut virtute fabellas vix, no pri falli eloquentiam adversarium. Ea legere labore eam. Et eum sumo ocurreret, eos ei saepe oratio omittantur, legere eligendi partiendo pro te.</p>#}
+{#                <div class="btn_1">Read more</div>#}
+{#                </a>#}
+{#            </div>#}
+{#      </div><!-- End row -->#}
+{#      </div><!-- End container -->#}
+
+<div class="modal fade" id="contact_us" tabindex="-1" role="dialog" aria-labelledby="contact_us" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content modal-popup" style="background-color:#78cfcf;">
+				<a href="" class="close-link"><i class="icon_close_alt2"></i></a>
+				<form class="popup-form" method="POST" id="id_contact_us_form">{% csrf_token %}
+                    <div class="alert-new alert-danger-new section-hide error-msgs" id="id_all_error"></div>
+                    <div class=""><p style="font-size: 30px;">Register</p></div>
+					<input type="text" class="form-control form-white" placeholder="Name" name="name" required>
+                    <div class="alert-new alert-danger-new section-hide error-msgs" id="id_name_error">
+                    </div>
+					<input type="email" class="form-control form-white" placeholder="Email" name="email" required>
+                    <div class="alert-new alert-danger-new section-hide error-msgs" id="id_email_error">
+                    </div>
+                    <input type="number" class="form-control form-white" placeholder="Phone" name="phone" required>
+                    <div class="alert-new alert-danger-new section-hide error-msgs" id="id_phone_error">
+                    </div>
+                    <div id="pass-info" class="clearfix"></div>
+					<button type="submit" class="btn btn-submit">SignUp</button>
+				</form>
+			</div>
+		</div>
+</div>
 
 <div class="layer"></div><!-- Mobile menu overlay mask -->
 
