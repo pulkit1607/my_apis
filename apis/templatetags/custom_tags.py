@@ -34,9 +34,10 @@ def get_individual_price(id):
 def get_tax(user_cart_details):
     tax_total = 0
     for each in user_cart_details:
+        print each
         if each.product.menu_type == 1:
-            product_tax = int(each.product.price * 0.05)
-            total_product_tax = int(each.qty * product_tax)
+            product_tax = each.product.price * 0.05
+            total_product_tax = each.qty * product_tax
             tax_total = tax_total + total_product_tax
         # else:
         #     print "here 2"

@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'qzm)=u#tt+w6(a0@p3a)nqwnx+avdkuwl@74bmk0vl_gr+i!j6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -203,6 +203,7 @@ STATIC_URL = '/static/'
 # AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
 
 # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
+MEDIA_URL = "/media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 if DEBUG:
@@ -223,7 +224,6 @@ PRIVATE_AUTH_TOKEN = "1a733717bcd1fa397dd0d04d3bace0fa"
 PRIVATE_SALT = "0e98c4c9b94f4b63916a087075e2f95e"
 
 GOOGLE_MAPS_GEOLOCATION_KEY = "AIzaSyB8L5XklsbEJ-_R5v-YJe7Znl08m-4n2Zw"
-MEDIA_URL = '/media/'
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
