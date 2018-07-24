@@ -211,7 +211,7 @@
 				
 						</div>
 					</div>
-                    </form>
+{#                    </form>#}
 				</div><!-- End box_style_1 -->
 			</div><!-- End col-md-6 -->
             
@@ -224,7 +224,7 @@
                     {% for item in user_cart_details %}
 					<tr>
 						<td>
-							<a data-url = "{% url 'dec-cart-view' %}" onclick="decrement_to_cart({{ item.product.id }})" id="id_dec_cart" class="remove_item"><i class="icon_minus_alt"></i></a> <strong>{{ item.qty }}x </strong>{{ item.product_name }}
+							 <strong>{{ item.qty }}x </strong>{{ item.product_name }}
 						</td>
 						<td>
 							<strong class="pull-right">Rs. {{ item.price }}</strong>
@@ -282,7 +282,7 @@
 				</div><!-- End cart_box -->
                 </div><!-- End theiaStickySidebar -->
 			</div><!-- End col-md-3 -->
-            
+            </form>
 		</div><!-- End row -->
 </div><!-- End container -->
 <!-- End Content =============================================== -->
@@ -303,6 +303,7 @@
 
 {% block extra_js %}
 <script src="{% static 'assets/js_home/js/theia-sticky-sidebar.js' %}"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
     jQuery('#sidebar').theiaStickySidebar({
       additionalMarginTop: 80
@@ -336,37 +337,10 @@
             data: $('#id_form_create_order').serialize(),
             success: function(response){
                 if(response.status){
-                    var amount = {{ final }} * 100;
-                    var options = {
-                        "key": "{{ key_id }}",
-                        "amount": amount,
-                        "name": "Queued",
-                        "description": "Legal Solutions Better Easier Faster",
-                        "handler": function (response){
-                        $('#rzp-button1').button('loading');
-                        $.ajax({
-                            url: '/verify-payment/',
-                            type:'GET',
+                    console.log(window.location.href = response.instamojo, '_blank')
 
-                            data : {'payment_key':response.razorpay_payment_id,'payment_price':amount},
-                            success:function(ajax_response){
-                                console.log('here');
-                            }
-                        });
-                        },
-                        "prefill": {
-                            "name": "{{ user.first_name }}",
-                            "email": "{{ user.email }}"
-                        },
-                        "notes": {
-                            "Order_Id": response.data
-                        },
-                        "theme": {
-                            "color": "#eb6a2b"
-                        }
-                    };
-                    var rzp1 = new Razorpay(options);
-                    rzp1.open();
+
+
                 }else{
 {#                    for(var i=0; i<response.errors.length; i++){#}
 {#                        if (response.errors[i].key == '__all__'){#}
@@ -426,7 +400,6 @@ function create_order_hotel() {
 }
 
 </script>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <!-- SPECIFIC SCRIPTS -->
 <script  src="{% static 'assets/js_home/js/cat_nav_mobile.js' %}"></script>
 <script>$('#cat_nav').mobileMenu();</script>

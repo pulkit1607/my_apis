@@ -54,13 +54,14 @@
                                     <td style="text-align: center; vertical-align: middle;">{{ order.total_amount }}</td>
                                     <td>{{ order.date }}</td>
                                     <td>{{ order.created.date }}</td>
-                                    {% if order.accepted %}
-                                        <td>Accepted</td>
-                                    {% elif order.rejected %}
-                                        <td>Rejected</td>
-                                    {% else %}
-                                        <td>N/A</td>
-                                    {% endif %}
+{#                                    {% if order.accepted %}#}
+{#                                        <td>Accepted</td>#}
+{#                                    {% elif order.rejected %}#}
+{#                                        <td>Rejected</td>#}
+{#                                    {% else %}#}
+{#                                        <td>N/A</td>#}
+{#                                    {% endif %}#}
+                                    <td>{{ order.get_order_status }}</td>
                                 </tr>
                             {% endfor %}
                         </tbody>

@@ -1530,7 +1530,7 @@ class CreateOrderView(AjaxResponseMixin, JSONResponseMixin, View):
             order.number_of_persons = form.cleaned_data['number_of_persons']
             order.order_status = 1
             order.payment_status = 3
-            order.payment_type = 1
+            order.payment_type = 0
             order.save()
 
         for each in cd:
@@ -1540,30 +1540,42 @@ class CreateOrderView(AjaxResponseMixin, JSONResponseMixin, View):
                 qty=each.qty,
                 amount=each.price
             )
+        CartDetails.objects.filter(cart=cart).delete()
+
+        buyer_name = order.customer.user.get_full_name()
 
         ##InstaMojo Testing
 
+        api = Instamojo(api_key="17dc18b558c84e50dcf97dd2ade37624",
+                        auth_token="1a733717bcd1fa397dd0d04d3bace0fa")
 
-
-        api = Instamojo(api_key=settings.PRIVATE_API_KEY,
-                        auth_token=settings.PRIVATE_AUTH_TOKEN)
 
         # Create a new Payment Request
         response = api.payment_request_create(
             amount=order.total_incl_amount,
-            purpose='Bill',
+            purpose='Payment for Order Number' + str(order.order_id),
             send_email=True,
             email=order.customer.user.email,
-            redirect_url="/order/confirmation/"+ order.order_id + "/"
+            buyer_name=buyer_name,
+            phone=order.customer.contact,
+            redirect_url="http://127.0.0.1:8000/order/confirmation/instamojo/",
         )
 
-        # print response['payment_request']['longurl']
-        # print response['payment_request']['id']
+        print response
+
+        order.instamojo_payment_request_id = response['payment_request']['id']
+        order.instamojo_payment_long_url = response['payment_request']['longurl']
+        order.save()
 
         response['status'] = True
         response['data'] = order.order_id
+        response['instamojo'] = response['payment_request']['longurl']
+
+
+
         # tmp = {'total_amount': int(order.total_amount * 100)}
         # response['data'] = tmp
+        # return HttpResponseRedirect(response['payment_request']['longurl'])
         return self.render_json_response(response)
 
 
@@ -1698,3 +1710,54 @@ class OrderConfirmationView(TemplateView):
         context['order']=order
         context['order_details']=order_details
         return context
+
+class InstamojoOrderConfirmationView(TemplateView):
+    template_name = 'website/confirmation.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(InstamojoOrderConfirmationView, self).get_context_data(**kwargs)
+        payment_request_id = self.request.GET.get('payment_request_id')
+        payment_id = self.request.GET.get('payment_id')
+        api = Instamojo(api_key="17dc18b558c84e50dcf97dd2ade37624",
+                        auth_token="1a733717bcd1fa397dd0d04d3bace0fa")
+
+        # Create a new Payment Request
+        response = api.payment_request_payment_status(str(payment_request_id), str(payment_id))
+        print response['payment_request']['purpose']  # Purpose of Payment Request
+        print response['payment_request']['payment']['status']  # Payment status
+
+        if response['payment_request']['payment']['status'] == True:
+            try:
+                order = Order.objects.get(instamojo_payment_request_id=payment_request_id)
+            except:
+                context['failure']=True
+                context['order'] = order
+                return context
+
+            order.instamojo_payment_id=payment_id
+            order.payment_status=1
+            order.save()
+            context['failure'] = False
+            context['order'] = order
+            order_details = OrderDetails.objects.filter(order=order)
+            context['order_details'] = order_details
+            return context
+
+        else:
+            order = Order.objects.get(instamojo_payment_request_id=payment_request_id)
+            context['failure'] = True
+            context['order'] = order
+            return context
+
+        # print response['payment_request']['shorturl']  # Get the short URL
+        # print response['payment_request']['status']  # Get the current status
+        # print response['payment_request']['payments']  # List of payments
+        #
+        # order = Order.objects.get(instamojo_payment_request_id=self.request.GET.get('payment_request_id'))
+        # if order:
+        #     order.instamojo_payment_id = self.request.GET.get('payment_id')
+        #     order.save()
+        # order_details = OrderDetails.objects.filter(order=order)
+        # context['order']=order
+        # context['order_details']=order_details
+        # return context

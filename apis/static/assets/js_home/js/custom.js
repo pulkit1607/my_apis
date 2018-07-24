@@ -174,10 +174,12 @@ function decrement_to_cart(item){
 }
 
 $(document).ready(function () {
+    var todayDate = new Date().getDate();
    $('#order_date').datetimepicker({
                     minDate: new Date(),
                     locale: 'en',
-                    format: 'MM/DD/YYYY'
+                    format: 'MM/DD/YYYY',
+                    maxDate: new Date(new Date().setDate(todayDate + 30))
                 });
 
    $('#order_time').datetimepicker({

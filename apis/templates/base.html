@@ -99,7 +99,7 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
                     <img src="{% static 'assets/img_home/img/website-inverse.png' %}" width="180" height="auto" alt="" data-retina="true">
                 </div>
                 <a href="#" class="open_close" id="close_in"><i class="icon_close"></i></a>
-{#                <ul>#}
+                <ul>
 {#                    <li class="submenu">#}
 {#                    <a href="javascript:void(0);" class="show-submenu">Home<i class="icon-down-open-mini"></i></a>#}
 {#                    <ul>#}
@@ -146,22 +146,22 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 {#                        <li><a href="icon_pack_2.html">Icon pack 2</a></li>#}
 {#                    </ul>#}
 {#                    </li>#}
-{#                    {% if not user.is_authenticated %}#}
-{#                        <li><a href="#0" data-toggle="modal" data-target="#login_2">Login</a></li>#}
-{#                        <li><a href="#0" data-toggle="modal" data-target="#register">Register</a></li>#}
-{#                    {% else %}#}
-{#                        <li><a href="#0" data-toggle="modal" data-target="#cart">Cart<i class="icon-basket"></i></a></li>#}
-{#                        <li class="submenu">#}
-{#                        <a href="javascript:void(0);" class="show-submenu">Profile<i class="icon-down-open-mini"></i></a>#}
-{#                        <ul>#}
-{#                            <li><a href="{% url 'update-profile' %}">Edit Profile</a></li>#}
-{#                            <li><a href="{% url 'orders-list' %}">My Orders</a></li>#}
-{#                            <li><a href="{% url 'logout-user' %}">Logout<i class="icon-logout"></i></a></li>#}
-{#                        </ul>#}
-{#                        </li>#}
-{##}
-{#                    {% endif %}#}
-{#                </ul>#}
+                    {% if not user.is_authenticated %}
+                        <li><a href="#0" data-toggle="modal" data-target="#login_2">Login</a></li>
+                        <li><a href="#0" data-toggle="modal" data-target="#register">Register</a></li>
+                    {% else %}
+                        <li><a href="#0" data-toggle="modal" data-target="#cart">Cart<i class="icon-basket"></i></a></li>
+                        <li class="submenu">
+                        <a href="javascript:void(0);" class="show-submenu">Profile<i class="icon-down-open-mini"></i></a>
+                        <ul>
+                            <li><a href="{% url 'update-profile' %}">Edit Profile</a></li>
+                            <li><a href="{% url 'orders-list' %}">My Orders</a></li>
+                            <li><a href="{% url 'logout-user' %}">Logout<i class="icon-logout"></i></a></li>
+                        </ul>
+                        </li>
+
+                    {% endif %}
+                </ul>
             </div><!-- End main-menu -->
             </nav>
         </div><!-- End row -->

@@ -25,7 +25,7 @@ schema_view = get_swagger_view(title='FINGERTIPS API')
 
 
 urlpatterns = [
-    url(r'^admin/', admin.site.urls),
+    url(r'^admin/thequeuedteam/', admin.site.urls),
     url(r'^', include('apis.urls')),
     url(r'^api-docs/', schema_view),
     url(r'^$', HomeView.as_view(), name='home'),
@@ -62,6 +62,7 @@ urlpatterns = [
     url(r'^orders/list/$', OrdersListView.as_view(), name='orders-list'),
     url(r'^order/detail/(?P<pk>[0-9]+)/$', OrderDetailView.as_view(), name='orders-detail'),
     url(r'^order/confirmation/(?P<order_id>[0-9]{1,10})/$', OrderConfirmationView.as_view(), name='order-confirmation'),
+    url(r'^order/confirmation/instamojo/$', InstamojoOrderConfirmationView.as_view(), name='instamojo-order-confirmation'),
 
 ]
 if settings.DEBUG:

@@ -60,7 +60,7 @@
 		
 	#sub_content{padding:0 30px;}
 	#sub_content h1{font-size:24px;}
-	/*#home #subheader #sub_content p , #hero_video #sub_content p{ display:none}*/
+	#home #subheader #sub_content p , #hero_video #sub_content p{ display:none}
 	#home #subheader #sub_content p , #hero_video #sub_content p{ display:block}
 	#custom-search-input, #custom-search-input .search-query {width:400px;}
 	
