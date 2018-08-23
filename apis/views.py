@@ -1264,6 +1264,67 @@ class SignupView(AjaxResponseMixin, JSONResponseMixin, View):
 
         return self.render_json_response(response)
 
+
+
+class ContactView(AjaxResponseMixin, JSONResponseMixin, View):
+
+    def dispatch(self, request, *args, **kwargs):
+        """
+        Check to see if the user in the request has the required
+        permission.
+        """
+        if request.method == "GET":
+            return redirect("/")
+
+        return super(ContactView, self).dispatch(request, *args, **kwargs)
+
+    def post_ajax(self, request, *args, **kwargs):
+        print "here"
+        """
+            Signup the user first and then sigin the user.
+        """
+        response = {'status': False, 'errors': []}
+
+        form = ContactUsForm(request.POST, request=request)
+
+        if form.is_valid():
+            print "inside form valid"
+            email = form.cleaned_data['email']
+            name_obj = form.cleaned_data['name']
+            contact_obj = form.save()
+            # email = form.cleaned_data['email']
+            # user = User.objects.get(email__iexact=email)
+            # user.is_active = False
+            # user.save()
+
+            current_site = get_current_site(request)
+
+            try:
+                email_sender = SendEmail(request)
+                email_sender.send([email], "email_messages/thank_you.html",
+                                                            {'name':name_obj
+                                                             },
+                                                            "Thank You", [])
+            except:
+                pass
+            response['status'] = True
+            return self.render_json_response(response)
+        else:
+            print "inside form invalid"
+            print form
+
+            # Django simple captcha view
+
+            # data = render_to_string("account/signup_modal.html", {'signup_form': form}, request=request)
+            # response['data'] = data
+
+            for key, value in form.errors.iteritems():
+                tmp = {'key': key, 'error': value.as_text()}
+                response['errors'].append(tmp)
+
+        return self.render_json_response(response)
+
+
 class EmailAccountActivate(View):
 
    def get(self, request, **kwargs):

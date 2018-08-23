@@ -47,6 +47,7 @@ urlpatterns = [
     url(r'^account/login/$', LoginView.as_view(), name="login-user"),
     url(r'^account/logout/$', LogoutView.as_view(), name='logout-user'),
     url(r'^account/signup/$', SignupView.as_view(), name="signup-user"),
+    url(r'^contact/$', ContactView.as_view(), name="contact"),
     url(r'^account/activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         EmailAccountActivate.as_view(), name='activate'),
     url(r'^account/forgot-password/$', ForgotPasswrod.as_view(), name="forgot-password"),

@@ -50,6 +50,11 @@ s0.parentNode.insertBefore(s1,s0);
 </script>
 <!--End of Tawk.to Script-->
 
+{#<!--Start of Small Chat-->#}
+{#    <script src="https://embed.small.chat/TC9BH9SDAGC9EKE3UK.js" async></script>#}
+{#<!--End of Small Chat-->#}
+
+
 <!-- Google Tag Manager -->
 <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
 new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
@@ -331,6 +336,33 @@ height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 			</div>
 		</div>
 </div><!-- End Register modal -->
+
+
+<div class="modal fade" id="id_contact_us" tabindex="-1" role="dialog" aria-labelledby="myRegister" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content modal-popup" style="background-color:#78cfcf;">
+				<a href="" class="close-link"><i class="icon_close_alt2"></i></a>
+				<form action="#" data-url="{% url 'contact' %}" class="popup-form" method="POST" id="id_contact_us_form" onsubmit="return contact_us()">{% csrf_token %}
+                    <div class="alert-new alert-danger-new section-hide error-msgs" id="id_all_error_signup"></div>
+                    <div class="login_icon"><i class="icon_lock_alt"></i></div>
+					<input type="text" class="form-control form-white" placeholder="Name" name="name">
+                    <div class="alert-new alert-danger-new section-hide error-msgs" id="id_name_error_signup">
+                    </div>
+                    <input type="email" class="form-control form-white" placeholder="Email" name="email">
+                    <div class="alert-new alert-danger-new section-hide error-msgs" id="id_email_error_signup">
+                    </div>
+                    <input type="number" class="form-control form-white" placeholder="Phone Number" name="phone">
+                    <div class="alert-new alert-danger-new section-hide error-msgs" id="id_phone_error_signup">
+                    </div>
+                    <input type="text" class="form-control form-white" placeholder="Your Query" name="query">
+                    <div class="alert-new alert-danger-new section-hide error-msgs" id="id_query_error_signup">
+                    </div>
+                    <div id="pass-info" class="clearfix"></div>
+					<button type="submit" class="btn btn-submit">Submit</button>
+				</form>
+			</div>
+		</div>
+</div>
 
 <div class="modal fade" id="cart" tabindex="-1" role="dialog" aria-labelledby="cart" aria-hidden="true">
 		<div class="modal-dialog">

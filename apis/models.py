@@ -270,6 +270,7 @@ class ContactUs(models.Model):
     name = models.CharField(max_length=250, null=True, blank=False)
     email = models.EmailField(null=True, blank=False)
     phone = models.CharField(max_length=250, null=True, blank=False)
+    query = models.TextField(null=True, blank=False)
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
 

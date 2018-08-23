@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from apis.forms import LoginForm, SignupForm, ForgotPasswordForm
+from apis.forms import LoginForm, SignupForm, ForgotPasswordForm, ContactUsForm
 from apis.models import Cart, CartDetails
 from my_apis.settings import RAZORPAY_KEY_ID
 
@@ -18,6 +18,7 @@ def form_context(request):
             'login_form': LoginForm(),
             'signup_form': SignupForm(),
             'forgot_password_form': ForgotPasswordForm(),
+            'contact_us_form': ContactUsForm(),
         }
 
     return context

@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'qzm)=u#tt+w6(a0@p3a)nqwnx+avdkuwl@74bmk0vl_gr+i!j6'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 
@@ -228,8 +228,8 @@ GOOGLE_MAPS_GEOLOCATION_KEY = "AIzaSyB8L5XklsbEJ-_R5v-YJe7Znl08m-4n2Zw"
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'no-reply@queued.co.in'
-EMAIL_HOST_PASSWORD = 'carpediem'
-DEFAULT_FROM_EMAIL = 'no-reply@queued.co.in'
-DEFAULT_TO_EMAIL = 'no-reply@queued.co.in'
+EMAIL_HOST_USER = 'mailqueued@gmail.com'
+EMAIL_HOST_PASSWORD = 'pulkit1607'
+DEFAULT_FROM_EMAIL = 'mailqueued@gmail.com'
+DEFAULT_TO_EMAIL = 'mailqueued@gmail.com'
 DEFAULT_FROM_EMAIL_NAME = 'QUEUED'
