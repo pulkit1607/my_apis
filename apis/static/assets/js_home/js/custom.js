@@ -42,6 +42,7 @@ function login_user(){
 
 function signup_user(){
     $('.error-msgs').hide();
+    $('#id_register_btn').button('loading');
     $.ajax({
         url: $('#id_signup_form').attr('data-url'),
         type: $('#id_signup_form').attr('method'),
@@ -49,6 +50,36 @@ function signup_user(){
         success: function(response){
             if(response.status){
                 alert('An email has been sent to your account activation. Please click on that link to proceed');
+                location.reload();
+            }else{
+
+                // $('#id_signup_form').html(response.data);
+                $('#id_register_btn').button('reset');
+                for(var i=0; i<response.errors.length; i++){
+                    if (response.errors[i].key == '__all__'){
+                        $('#id_all_error_signup').text(response.errors[i].error);
+                        $('#id_all_error_signup').show();
+                    }else{
+                        $('#id_'+response.errors[i].key+'_error_signup').text(response.errors[i].error);
+                        $('#id_'+response.errors[i].key+'_error_signup').show();
+                        $('#id_'+response.errors[i].key+'_error_parent_div_signup').addClass('has-error');
+                    }
+                }
+            }
+        }
+    });
+    return false;
+}
+
+function contact_us(){
+    $('.error-msgs').hide();
+    $.ajax({
+        url: $('#id_contact_us_form').attr('data-url'),
+        type: $('#id_contact_us_form').attr('method'),
+        data: $('#id_contact_us_form').serialize(),
+        success: function(response){
+            if(response.status){
+                alert('We have received your query. Thank You.');
                 location.reload();
             }else{
 
@@ -69,6 +100,8 @@ function signup_user(){
     });
     return false;
 }
+
+
 
 function forgot_password_submit(){
     $('.error-msgs').hide();
