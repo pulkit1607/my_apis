@@ -66,5 +66,5 @@ urlpatterns = [
     url(r'^order/confirmation/instamojo/$', InstamojoOrderConfirmationView.as_view(), name='instamojo-order-confirmation'),
 
 ]
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
