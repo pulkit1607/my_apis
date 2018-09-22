@@ -54,7 +54,7 @@ function signup_user(){
             }else{
 
                 // $('#id_signup_form').html(response.data);
-                $('#id_register_btn').button('reset');
+                $('#id_register_btn').button('loading');
                 for(var i=0; i<response.errors.length; i++){
                     if (response.errors[i].key == '__all__'){
                         $('#id_all_error_signup').text(response.errors[i].error);
